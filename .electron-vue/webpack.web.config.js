@@ -11,7 +11,8 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 let webConfig = {
-  devtool: '#cheap-module-eval-source-map',
+  //devtool: '#cheap-module-eval-source-map',
+  devtool: '#source-map',
   entry: {
     web: path.join(__dirname, '../src/renderer/main.js')
   },
