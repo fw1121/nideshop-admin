@@ -147,9 +147,26 @@ export default {
       console.log("change:" + item);
     },
     onSubmitInfo() {
+
+      if(this.recommendChecked==1)
+      {
+        this.infoForm.is_new = true;
+        this.infoForm.is_hot = false;
+      }
+      else if(this.recommendChecked==2)
+      {
+        this.infoForm.is_new = false;
+        this.infoForm.is_hot = true;
+      }
+      else
+      {
+        this.infoForm.is_new = false;
+        this.infoForm.is_hot = false;
+      }
+
       this.$refs["infoForm"].validate(valid => {
         if (valid) {
-          this.axios.post("brand/store", this.infoForm).then(response => {
+          this.axios.post("goods/store", this.infoForm).then(response => {
             if (response.data.errno === 0) {
               this.$message({
                 type: "success",
