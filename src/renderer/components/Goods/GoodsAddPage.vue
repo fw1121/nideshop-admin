@@ -34,18 +34,30 @@
               <el-option v-for="item in brandOptions" :key="item.id" :label="item.name" :value="item.id"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="商品简介" prop="simple_desc">
-            <el-input type="textarea" v-model="infoForm.simple_desc" :rows="3"></el-input>
+          <!-- <el-form-item label="商品简介" prop="goods_desc">
+            <el-input type="textarea" v-model="infoForm.goods_desc" :rows="3"></el-input>
             <div class="form-tip"></div>
-          </el-form-item>
-          <el-form-item label="商品图片" prop="list_pic_url">
+          </el-form-item> -->
+
+          <el-upload v-for="item in infoForm.goods_desc" :key="item" class="image-uploader" name="goods_desc"
+                       action="api.rootUrl+'/upload/brandPic'" :show-file-list="true"
+                       :on-success="handleUploadImageSuccess" :headers="uploaderHeader">
+              <img v-if="item" :src="item" class="image-show">
+              <i v-else class="el-icon-plus image-uploader-icon"></i>
+          </el-upload>
+
+          <el-form-item label="商品封面" prop="list_pic_url">
+
+            <!-- <img v-for="item in parentCategory" :key="item.id" :label="item.name" :value="item.id" :src="infoForm.list_pic_url" class="image-show"> -->
+
             <el-upload class="image-uploader" name="brand_pic"
                        action="http://127.0.0.1:8360/admin/upload/brandPic" :show-file-list="true"
                        :on-success="handleUploadImageSuccess" :headers="uploaderHeader">
               <img v-if="infoForm.list_pic_url" :src="infoForm.list_pic_url" class="image-show">
               <i v-else class="el-icon-plus image-uploader-icon"></i>
+              <div class="form-tip">图片尺寸：750*420</div>
             </el-upload>
-            <div class="form-tip">图片尺寸：750*420</div>
+            
           </el-form-item>
           <el-form-item label="规格/库存" prop="goods_number_rule">
             <el-input-number v-model="infoForm.goods_number" :min='0' :max='99999'></el-input-number>
@@ -81,6 +93,7 @@
 
 <script>
 import api from "@/config/api";
+import { log } from 'util';
 export default {
   data() {
     return {
@@ -100,17 +113,19 @@ export default {
 
       recommendChecked:0, // 推荐选中数据
 
+      actionGoodsPic : api.rootUrl+'/upload/brandPic',
+      actionGoodsPic : api.rootUrl+'/upload/brandPic',
+
       infoForm: {
         id: 0,
         
         name: "",
         list_pic_url: "",
-        simple_desc: "",
+        goods_desc: [],
         pic_url: "",
         sort_order: 100,
         is_show: true,
         floor_price: 0,
-        app_list_pic_url: "",
         is_new: false,
         new_pic_url: "",
         new_sort_order: 10,
@@ -124,11 +139,11 @@ export default {
       },
       infoRules: {
         name: [{ required: true, message: "请输入名称", trigger: "blur" }],
-        simple_desc: [
+        goods_desc: [
           { required: false, message: "请输入简介", trigger: "blur" }
         ],
         list_pic_url: [
-          { required: true, message: "请选择商品图片", trigger: "blur" }
+          { type:"string", required: true, message: "请选择商品图片", trigger: "blur" }
         ],
         goods_number_rule: [
           { type:'number', required: false,  message: "请填写库存", trigger:"blur"},
@@ -190,10 +205,17 @@ export default {
         switch (res.data.name) {
           //商品图片
           case "brand_pic":
-            this.$set("infoForm.list_pic_url", res.data.fileUrl);
+          //  this.$set("infoForm.list_pic_url", res.data.fileUrl);
+            this.infoForm.list_pic_url = res.data.fileUrl;
+
             break;
           case "brand_new_pic":
             this.$set("infoForm.new_pic_url", res.data.fileUrl);
+            break;
+
+          // 商品描述图片
+          case "goods_desc":
+            this.infoForm.goods_desc.push(res.data.fileUrl);
             break;
         }
       }
@@ -263,8 +285,6 @@ export default {
             this.recommendChecked = 0;
           }
 
-      
-
           that.infoForm = resInfo;
 
           this.handleCategorySelected();
@@ -284,7 +304,7 @@ export default {
 
 <style>
 .image-uploader {
-  height: 105px;
+  height: 130px;
 }
 .image-uploader .el-upload {
   border: 1px solid #d9d9d9;
@@ -301,14 +321,14 @@ export default {
   font-size: 28px;
   color: #8c939d;
   width: 187px;
-  height: 105px;
-  line-height: 105px;
+  height: 100px;
+  line-height: 100px;
   text-align: center;
 }
 
 .image-uploader .image-show {
   width: 187px;
-  height: 105px;
+  height: 100px;
   display: block;
 }
 
@@ -316,8 +336,8 @@ export default {
   font-size: 28px;
   color: #8c939d;
   width: 165px;
-  height: 105px;
-  line-height: 105px;
+  height: 100px;
+  line-height: 100px;
   text-align: center;
 }
 
@@ -325,14 +345,14 @@ export default {
   font-size: 28px;
   color: #8c939d;
   width: 165px;
-  height: 105px;
-  line-height: 105px;
+  height: 100px;
+  line-height: 100px;
   text-align: center;
 }
 
 .image-uploader.new-image-uploader .image-show {
   width: 165px;
-  height: 105px;
+  height: 100px;
   display: block;
 }
 </style>

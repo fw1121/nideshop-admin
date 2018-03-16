@@ -7,16 +7,20 @@ import 'element-ui/lib/theme-default/index.css'
 import App from './App'
 import router from './router'
 import store from './store'
+import api from './config/api'
 
 Vue.use(VueAxios, Axios);
 Vue.use(ElementUI);
+Vue.use(api);
 
 router.beforeEach((to, from, next) => {
 
 	let token = localStorage.getItem('token') || '';
 
     //配置接口信息
-    Axios.defaults.baseURL = 'http://127.0.0.1:8360/admin/';
+	//Axios.defaults.baseURL = 'http://127.0.0.1:8360/admin/';
+	Axios.defaults.baseURL = api.rootUrl;
+	console.log("api.rootUrl:" + api.rootUrl);
     Axios.defaults.headers.common['X-Nideshop-Token'] = token;
 
 	if (!token && to.name !== 'login') {
