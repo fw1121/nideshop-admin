@@ -29,7 +29,7 @@
           <el-form-item label="商品名称" prop="name">
             <el-input v-model="infoForm.name"></el-input>
           </el-form-item>
-          <el-form-item label="所属品牌">
+          <el-form-item label="所属品牌" prop="brand">
             <el-select v-model="infoForm.brand_id" placeholder="请选择品牌">
               <el-option v-for="item in brandOptions" :key="item.id" :label="item.name" :value="item.id"></el-option>
             </el-select>
@@ -39,20 +39,25 @@
             <div class="form-tip"></div>
           </el-form-item> -->
 
-          <el-upload v-for="item in infoForm.goods_desc" :key="item" class="image-uploader" name="goods_desc"
-                       action="api.rootUrl+'/upload/brandPic'" :show-file-list="true"
-                       :on-success="handleUploadImageSuccess" :headers="uploaderHeader">
-              <img v-if="item" :src="item" class="image-show">
-              <i v-else class="el-icon-plus image-uploader-icon"></i>
-          </el-upload>
-
-          <el-form-item label="商品封面" prop="list_pic_url">
-
-            <!-- <img v-for="item in parentCategory" :key="item.id" :label="item.name" :value="item.id" :src="infoForm.list_pic_url" class="image-show"> -->
+          <el-form-item label="商品详情">
+            <el-upload v-for="(item, curIndex) in infoForm.goods_desc" :key="item" class="image-uploader" name="brand_pic"
+                        :action="actionGoodsPic" :show-file-list="true"
+                        :on-success="handleUploadImageSuccess" :headers="uploaderHeader" :data="{index:curIndex,type:'desc'}">
+                <img v-if="item" :src="item" class="image-show">
+                <i v-else class="el-icon-plus image-uploader-icon"></i>
+            </el-upload>
 
             <el-upload class="image-uploader" name="brand_pic"
-                       action="http://127.0.0.1:8360/admin/upload/brandPic" :show-file-list="true"
-                       :on-success="handleUploadImageSuccess" :headers="uploaderHeader">
+                        :action="actionGoodsPic" :show-file-list="true"
+                        :on-success="handleUploadImageSuccess" :headers="uploaderHeader" :data="{index:infoForm.goods_desc.length,type:'desc'}">
+                <i class="el-icon-plus image-uploader-icon"></i>
+            </el-upload>
+          </el-form-item>
+
+          <el-form-item label="商品封面" prop="list_pic_url">
+            <el-upload class="image-uploader" name="brand_pic"
+                       :action="actionGoodsPic" :show-file-list="true"
+                       :on-success="handleUploadImageSuccess" :headers="uploaderHeader" :data="{index:0,type:'poster'}">
               <img v-if="infoForm.list_pic_url" :src="infoForm.list_pic_url" class="image-show">
               <i v-else class="el-icon-plus image-uploader-icon"></i>
               <div class="form-tip">图片尺寸：750*420</div>
@@ -60,7 +65,7 @@
             
           </el-form-item>
           <el-form-item label="规格/库存" prop="goods_number_rule">
-            <el-input-number v-model="infoForm.goods_number" :min='0' :max='99999'></el-input-number>
+            <el-input-number v-model.number="infoForm.goods_number" :min='0' :max='99999'></el-input-number>
           </el-form-item>
           <el-form-item label="推荐类型">
             <!-- <el-checkbox-group v-model="recommendCheckedList">
@@ -114,7 +119,7 @@ export default {
       recommendChecked:0, // 推荐选中数据
 
       actionGoodsPic : api.rootUrl+'/upload/brandPic',
-      actionGoodsPic : api.rootUrl+'/upload/brandPic',
+      testData:{testkey:"123"},
 
       infoForm: {
         id: 0,
@@ -139,15 +144,20 @@ export default {
       },
       infoRules: {
         name: [{ required: true, message: "请输入名称", trigger: "blur" }],
+        brand:[{ required: true, type:"number", message: "请选择品牌", trigger: "blur" }],
         goods_desc: [
           { required: false, message: "请输入简介", trigger: "blur" }
         ],
         list_pic_url: [
-          { type:"string", required: true, message: "请选择商品图片", trigger: "blur" }
+          { type:"string", required: true, message: "请选择商品图片", trigger: "blur", transform(value) {
+            return value;
+            } }
         ],
         goods_number_rule: [
-          { type:'number', required: false,  message: "请填写库存", trigger:"blur"},
-          
+          { type:'number', required: true,  message: "请填写库存", trigger:"blur", transform(value) {
+            return parseInt(value);
+            }
+          },
         ]
       }
     };
@@ -200,11 +210,12 @@ export default {
         }
       });
     },
-    handleUploadImageSuccess(res, file) {
+    handleUploadImageSuccess(res, file, param1, param2) {
+      console.log("res:" + res + ",file:" + file + ",param1:" + param1 + ",param2:" + param2);
       if (res.errno === 0) {
-        switch (res.data.name) {
-          //商品图片
-          case "brand_pic":
+        switch (res.data.params.type) {
+          //商品封面
+          case "poster":
           //  this.$set("infoForm.list_pic_url", res.data.fileUrl);
             this.infoForm.list_pic_url = res.data.fileUrl;
 
@@ -214,8 +225,18 @@ export default {
             break;
 
           // 商品描述图片
-          case "goods_desc":
-            this.infoForm.goods_desc.push(res.data.fileUrl);
+          case "desc":
+
+            let index = parseInt(res.data.params.index);
+            if(index>=this.infoForm.goods_desc.length) // 新增图片
+            {
+              this.infoForm.goods_desc.push(res.data.fileUrl);
+            }
+            else // 替换图片
+            {
+               this.infoForm.goods_desc.splice(index,1,res.data.fileUrl);
+            }
+            
             break;
         }
       }
