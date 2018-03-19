@@ -56,13 +56,18 @@
               <i v-else class="el-icon-plus image-uploader-icon"></i>
               <div class="form-tip">图片尺寸：750*420</div>
             </el-upload>
-            
           </el-form-item>
-          <el-form-item label="规格/库存" prop="goods_number" :rules="[
-          { type:'number', required: true,  message: '请填写库存', trigger:'blur'}
-        ]">
+
+
+
+          <el-form-item label="价格" prop="retail_price" :rules="[{ type:'number', required: true,  message: '请填写价格', trigger:'blur'}]">
+            <el-input type='number' v-model.number="infoForm.retail_price"></el-input>
+          </el-form-item>
+
+          <el-form-item label="规格/库存" prop="goods_number" :rules="[{ type:'number', required: true,  message: '请填写库存', trigger:'blur'}]">
             <el-input-number v-model.number="infoForm.goods_number" :min='0' :max='99999'></el-input-number>
           </el-form-item>
+
           <el-form-item label="推荐类型">
             <!-- <el-checkbox-group v-model="recommendCheckedList">
               <el-checkbox label="新品" v-model="infoForm.is_new"></el-checkbox>
@@ -84,12 +89,15 @@
 
 
           <el-form-item label="商品详情">
-            <el-upload v-for="(item, curIndex) in infoForm.goods_desc" :key="item" class="image-uploader" name="brand_pic"
-                        :action="actionGoodsPic" :show-file-list="true"
-                        :on-success="handleUploadImageSuccess" :headers="uploaderHeader" :data="{index:curIndex,type:'desc'}">
-                <img v-if="item" :src="item" class="image-show">
-                <i v-else class="el-icon-plus image-uploader-icon"></i>
-            </el-upload>
+              <div v-for="(item, curIndex) in infoForm.goods_desc" :key="item">
+                <el-upload  class="image-uploader" name="brand_pic"
+                            :action="actionGoodsPic" :show-file-list="true"
+                            :on-success="handleUploadImageSuccess" :headers="uploaderHeader" :data="{index:curIndex,type:'desc'}">
+                    <img v-if="item" :src="item" class="image-show">
+                    <i v-else class="el-icon-plus image-uploader-icon"></i>
+                </el-upload>                
+                <el-button class='image-delete' size="small" type="danger" @click="handleRowDelete(scope.$index, scope.row)">删除</el-button>    
+              </div>
 
             <el-upload class="image-uploader" name="brand_pic"
                         :action="actionGoodsPic" :show-file-list="true"
@@ -151,10 +159,10 @@ export default {
         goods_number:0,
         brand_id : null,
         category_id:0,
-        category_id:0,
         is_on_sale:true,
         is_hot:false,
         stock_type:0,
+        retail_price:0,
       },
       infoRules: {
         name: [{ required: true, message: "请输入名称", trigger: "blur" }],
@@ -180,7 +188,7 @@ export default {
 
     handleChange(item)
     {
-      console.log("change:" + item);
+        this.infoForm.category_id = item[item.length-1];
     },
     onSubmitInfo() {
 
@@ -362,6 +370,15 @@ export default {
   width: 187px;
   height: 100px;
   display: block;
+  float: left;
+}
+
+.image-uploader .image-delete
+{
+  margin-left: 20px;
+  position: relative;
+  overflow: hidden;
+  float: right;
 }
 
 .image-uploader.new-image-uploader {
@@ -387,4 +404,6 @@ export default {
   height: 100px;
   display: block;
 }
+
+
 </style>
