@@ -16,6 +16,17 @@
       <div class="form-table-box">
         <el-form ref="infoForm" :rules="infoRules" :model="infoForm" label-width="120px">
           
+          <el-form-item label="商品名称" prop="name">
+            <el-input v-model="infoForm.name"></el-input>
+          </el-form-item>
+
+          <el-form-item label="推荐类型">
+            <el-radio-group v-model="infoForm.stock_type">
+              <el-radio-button label="0" :key="0">Amazon海淘直达</el-radio-button>
+              <el-radio-button label="1" :key="1">海外产地直达</el-radio-button>
+          </el-radio-group>
+          </el-form-item>
+
           <el-form-item label="所属分类">
             <el-cascader :options="categoryOptions" :props="categoryCascaderConfig" placeholder="请选择分类" v-model="categorySelected" @change="handleChange" >
             </el-cascader>
@@ -26,10 +37,8 @@
             </el-select>
           </el-form-item> -->
 
-          <el-form-item label="商品名称" prop="name">
-            <el-input v-model="infoForm.name"></el-input>
-          </el-form-item>
-          <el-form-item label="所属品牌" prop="brand">
+          <el-form-item label="所属品牌" prop="brand_id" :rules="[
+          { type:'number', required: true,  message: '请选择所属品牌'}]">
             <el-select v-model="infoForm.brand_id" placeholder="请选择品牌">
               <el-option v-for="item in brandOptions" :key="item.id" :label="item.name" :value="item.id"></el-option>
             </el-select>
@@ -38,21 +47,6 @@
             <el-input type="textarea" v-model="infoForm.goods_desc" :rows="3"></el-input>
             <div class="form-tip"></div>
           </el-form-item> -->
-
-          <el-form-item label="商品详情">
-            <el-upload v-for="(item, curIndex) in infoForm.goods_desc" :key="item" class="image-uploader" name="brand_pic"
-                        :action="actionGoodsPic" :show-file-list="true"
-                        :on-success="handleUploadImageSuccess" :headers="uploaderHeader" :data="{index:curIndex,type:'desc'}">
-                <img v-if="item" :src="item" class="image-show">
-                <i v-else class="el-icon-plus image-uploader-icon"></i>
-            </el-upload>
-
-            <el-upload class="image-uploader" name="brand_pic"
-                        :action="actionGoodsPic" :show-file-list="true"
-                        :on-success="handleUploadImageSuccess" :headers="uploaderHeader" :data="{index:infoForm.goods_desc.length,type:'desc'}">
-                <i class="el-icon-plus image-uploader-icon"></i>
-            </el-upload>
-          </el-form-item>
 
           <el-form-item label="商品封面" prop="list_pic_url">
             <el-upload class="image-uploader" name="brand_pic"
@@ -64,7 +58,9 @@
             </el-upload>
             
           </el-form-item>
-          <el-form-item label="规格/库存" prop="goods_number_rule">
+          <el-form-item label="规格/库存" prop="goods_number" :rules="[
+          { type:'number', required: true,  message: '请填写库存', trigger:'blur'}
+        ]">
             <el-input-number v-model.number="infoForm.goods_number" :min='0' :max='99999'></el-input-number>
           </el-form-item>
           <el-form-item label="推荐类型">
@@ -85,6 +81,23 @@
           <el-form-item label="排序">
             <el-input-number v-model="infoForm.sort_order" :min="1" :max="1000"></el-input-number>
           </el-form-item>
+
+
+          <el-form-item label="商品详情">
+            <el-upload v-for="(item, curIndex) in infoForm.goods_desc" :key="item" class="image-uploader" name="brand_pic"
+                        :action="actionGoodsPic" :show-file-list="true"
+                        :on-success="handleUploadImageSuccess" :headers="uploaderHeader" :data="{index:curIndex,type:'desc'}">
+                <img v-if="item" :src="item" class="image-show">
+                <i v-else class="el-icon-plus image-uploader-icon"></i>
+            </el-upload>
+
+            <el-upload class="image-uploader" name="brand_pic"
+                        :action="actionGoodsPic" :show-file-list="true"
+                        :on-success="handleUploadImageSuccess" :headers="uploaderHeader" :data="{index:infoForm.goods_desc.length,type:'desc'}">
+                <i class="el-icon-plus image-uploader-icon"></i>
+            </el-upload>
+          </el-form-item>
+
           <el-form-item>
             <el-button type="primary" @click="onSubmitInfo">确定保存</el-button>
             <el-button @click="goBackPage">取消</el-button>
@@ -141,6 +154,7 @@ export default {
         category_id:0,
         is_on_sale:true,
         is_hot:false,
+        stock_type:0,
       },
       infoRules: {
         name: [{ required: true, message: "请输入名称", trigger: "blur" }],
@@ -154,10 +168,7 @@ export default {
             } }
         ],
         goods_number_rule: [
-          { type:'number', required: true,  message: "请填写库存", trigger:"blur", transform(value) {
-            return parseInt(value);
-            }
-          },
+          { type:'number', required: true,  message: "请填写库存", trigger:"blur"}
         ]
       }
     };

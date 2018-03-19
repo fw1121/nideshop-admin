@@ -8,7 +8,7 @@
 			</el-breadcrumb>
 			<div class="operation-nav">
 				<router-link to="/dashboard/operate/topic/add">
-					<el-button type="primary" icon="plus">添加专题</el-button>
+					<el-button type="primary" icon="plus">添加添加专题</el-button>
 				</router-link>
 			</div>
 		</div>
