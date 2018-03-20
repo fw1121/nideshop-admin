@@ -96,7 +96,7 @@
                     <img v-if="item" :src="item" class="image-show">
                     <i v-else class="el-icon-plus image-uploader-icon"></i>
                 </el-upload>                
-                <el-button class='image-delete' size="small" type="danger" @click="handleRowDelete(scope.$index, scope.row)">删除</el-button>    
+                <el-button class='image-delete' size="small" type="danger" @click="handleDeleteImg('desc', curIndex)">删除</el-button>    
               </div>
 
             <el-upload class="image-uploader" name="brand_pic"
@@ -261,6 +261,28 @@ export default {
       }
     },
 
+    /** 
+     *  处理删除图片
+     * @param type 类型 desc、poster、gallery
+     */
+    handleDeleteImg(type, index)
+    {
+        this.axios.post("goods/store", this.infoForm).then(response => {
+            if (response.data.errno === 0) {
+              this.$message({
+                type: "success",
+                message: "保存成功"
+              });
+              this.$router.go(-1);
+            } else {
+              this.$message({
+                type: "error",
+                message: "保存失败"
+              });
+            }
+          });
+    },
+
     getCascaderCategory() {
         this.axios.get('category/cascader').then((response) => {
           this.categoryOptions = this.categoryOptions.concat(response.data.data);
@@ -345,12 +367,14 @@ export default {
 <style>
 .image-uploader {
   height: 130px;
+  display: inline-block;
 }
 .image-uploader .el-upload {
   border: 1px solid #d9d9d9;
   cursor: pointer;
   position: relative;
   overflow: hidden;
+  
 }
 
 .image-uploader .el-upload:hover {
@@ -373,12 +397,10 @@ export default {
   float: left;
 }
 
-.image-uploader .image-delete
+.image-delete
 {
-  margin-left: 20px;
-  position: relative;
   overflow: hidden;
-  float: right;
+  bottom:10px;
 }
 
 .image-uploader.new-image-uploader {
