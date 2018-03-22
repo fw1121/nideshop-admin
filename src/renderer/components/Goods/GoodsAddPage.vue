@@ -16,6 +16,10 @@
       <div class="form-table-box">
         <el-form ref="infoForm" :rules="infoRules" :model="infoForm" label-width="120px">
           
+          
+          <el-form-item prop="deletedDescPics">
+          </el-form-item>
+
           <el-form-item label="商品名称" prop="name">
             <el-input v-model="infoForm.name"></el-input>
           </el-form-item>
@@ -140,7 +144,7 @@ export default {
       recommendChecked:0, // 推荐选中数据
 
       actionGoodsPic : api.rootUrl+'/upload/brandPic',
-      testData:{testkey:"123"},
+      
 
       infoForm: {
         id: 0,
@@ -148,6 +152,8 @@ export default {
         name: "",
         list_pic_url: "",
         goods_desc: [],
+        deletedDescPics : [], // 删除的详情图片
+        
         pic_url: "",
         sort_order: 100,
         is_show: true,
@@ -267,20 +273,20 @@ export default {
      */
     handleDeleteImg(type, index)
     {
-        this.axios.post("goods/store", this.infoForm).then(response => {
-            if (response.data.errno === 0) {
-              this.$message({
-                type: "success",
-                message: "保存成功"
-              });
-              this.$router.go(-1);
-            } else {
-              this.$message({
-                type: "error",
-                message: "保存失败"
-              });
+
+      switch (type)
+      {
+          case "desc":
+          {
+            if(index>=0 && index<this.infoForm.goods_desc.length)
+            {
+              let deletedUrls = this.infoForm.goods_desc.splice(index, 1);
+              this.infoForm.deletedDescPics.push(deletedUrls[0]);
             }
-          });
+          }
+          break;
+      }
+      
     },
 
     getCascaderCategory() {
@@ -347,7 +353,7 @@ export default {
             this.recommendChecked = 0;
           }
 
-          that.infoForm = resInfo;
+          that.infoForm = Object.assign(that.infoForm, resInfo);
 
           this.handleCategorySelected();
         });
