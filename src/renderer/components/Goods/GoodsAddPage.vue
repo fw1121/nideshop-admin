@@ -91,6 +91,25 @@
             <el-input-number v-model="infoForm.sort_order" :min="1" :max="1000"></el-input-number>
           </el-form-item>
 
+          <el-form-item label="商品banner">
+              <div v-for="(item, curIndex) in infoForm.gallery" :key="item.img_url">
+                <el-upload  class="image-uploader" name="brand_pic"
+                            :action="actionGoodsPic" :show-file-list="true"
+                            :on-success="handleUploadImageSuccess" :headers="uploaderHeader" :data="{index:curIndex,type:'banner'}">
+                            
+                    <img v-if="item.img_url" :src="item.img_url" class="image-show">
+                    <i v-else class="el-icon-plus image-uploader-icon"></i>
+
+                </el-upload>                
+                <el-button class='image-delete' size="small" type="danger" @click="handleDeleteImg('banner', curIndex)">删除</el-button>    
+              </div>
+
+            <el-upload v-if="infoForm.gallery.length<4" class="image-uploader" name="brand_pic"
+                        :action="actionGoodsPic" :show-file-list="true"
+                        :on-success="handleUploadImageSuccess" :headers="uploaderHeader" :data="{index:infoForm.gallery.length,type:'banner'}">
+                <i class="el-icon-plus image-uploader-icon"></i>
+            </el-upload>
+          </el-form-item>
 
           <el-form-item label="商品详情">
               <div v-for="(item, curIndex) in infoForm.goods_desc" :key="item">
@@ -169,6 +188,9 @@ export default {
         is_hot:false,
         stock_type:0,
         retail_price:0,
+
+        gallery:[], // 商品banner对象集合
+        deletedGalleries : [], // 删除的banner对象集合
       },
       infoRules: {
         name: [{ required: true, message: "请输入名称", trigger: "blur" }],
@@ -235,23 +257,37 @@ export default {
         }
       });
     },
-    handleUploadImageSuccess(res, file, param1, param2) {
-      console.log("res:" + res + ",file:" + file + ",param1:" + param1 + ",param2:" + param2);
+    handleUploadImageSuccess(res, file) {
+      
       if (res.errno === 0) {
         switch (res.data.params.type) {
           //商品封面
           case "poster":
-          //  this.$set("infoForm.list_pic_url", res.data.fileUrl);
             this.infoForm.list_pic_url = res.data.fileUrl;
-
             break;
-          case "brand_new_pic":
-            this.$set("infoForm.new_pic_url", res.data.fileUrl);
+
+          // 商品banner
+          case "banner":
+          {
+            let index = parseInt(res.data.params.index);
+            if(index>=this.infoForm.gallery.length) // 新增图片
+            {
+              let galleryObj = new Object;
+              galleryObj.id = 0;
+              galleryObj.goods_id = this.infoForm.id;
+              galleryObj.img_url = res.data.fileUrl;
+              this.infoForm.gallery.push(galleryObj);
+            }
+            else // 替换图片
+            {
+              this.infoForm.gallery[index].img_url = res.data.fileUrl;
+            }
+          }
             break;
 
           // 商品描述图片
           case "desc":
-
+          {
             let index = parseInt(res.data.params.index);
             if(index>=this.infoForm.goods_desc.length) // 新增图片
             {
@@ -259,9 +295,9 @@ export default {
             }
             else // 替换图片
             {
-               this.infoForm.goods_desc.splice(index,1,res.data.fileUrl);
+              this.infoForm.goods_desc.splice(index,1,res.data.fileUrl);
             }
-            
+          }
             break;
         }
       }
@@ -282,6 +318,16 @@ export default {
             {
               let deletedUrls = this.infoForm.goods_desc.splice(index, 1);
               this.infoForm.deletedDescPics.push(deletedUrls[0]);
+            }
+          }
+          break;
+
+          case "banner":
+          {
+            if(index>=0 && index<this.infoForm.gallery.length)
+            {
+              let deletedObj = this.infoForm.gallery.splice(index, 1);
+              this.infoForm.deletedGalleries.push(deletedObj[0]);
             }
           }
           break;
