@@ -18,6 +18,10 @@
                     <el-form-item label="商品名称">
                         <el-input v-model="filterForm.name" placeholder="商品名称"></el-input>
                     </el-form-item>
+                    <el-form-item label="所属分类" >
+                        <el-cascader :options="categoryOptions" :props="categoryCascaderConfig" placeholder="请选择分类" v-model="categorySelected" @change="handleChange" >
+                        </el-cascader>
+                    </el-form-item>
                     <el-form-item>
                         <el-button type="primary" @click="onSubmitFilter">查询</el-button>
                     </el-form-item>
@@ -29,7 +33,12 @@
                     </el-table-column>
                     <el-table-column prop="name" label="商品名称">
                     </el-table-column>
-                    <el-table-column prop="retail_price" label="售价" width="120">
+                    <el-table-column prop="stock_type" label="商品类型" width="120">
+                        <template scope="scope">
+                            {{ scope.row.stock_type == 1 ? '海外产地直达' : '海外直购' }}
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="retail_price" label="售价¥" width="120">
                     </el-table-column>
                     <el-table-column prop="goods_number" label="库存" width="120">
                     </el-table-column>
@@ -67,77 +76,105 @@
 </template>
 
 <script>
+export default {
+  data() {
+    return {
+      page: 1,
+      total: 0,
+      filterForm: {
+        name: "",
+        category_id: '',
+      },
+      tableData: [],
 
-  export default {
-    data() {
-      return {
-        page: 1,
-        total: 0,
-        filterForm: {
-          name: ''
-        },
-        tableData: []
+      categoryOptions: [{value:"", label:"请选择分类"}], // 分类数据
+      categoryCascaderConfig: {
+        value: "id",
+        label: "name",
+        children: "children"
+      }, // 分类数据配置
+      categorySelected: [], // 当前选中的分类
+    };
+  },
+  methods: {
+    handleChange(item) {
+      this.filterForm.category_id = item[item.length - 1];
+    },
+    getCascaderCategory() {
+      this.axios.get("category/cascader").then(response => {
+        this.categoryOptions = this.categoryOptions.concat(response.data.data);
+        this.handleCategorySelected();
+      });
+    },
+
+    handleCategorySelected() {
+      if (this.categoryOptions.length > 0 && this.filterForm.category_id > 0) {
+        this.categoryOptions.map(item => {
+          item.children.map(itemChild => {
+            if (itemChild.id === this.filterForm.category_id) {
+              this.categorySelected = [item.id, this.filterForm.category_id];
+              return;
+            }
+          });
+        });
       }
     },
-    methods: {
-      handlePageChange(val) {
-        this.page = val;
-        //保存到localStorage
-        localStorage.setItem('goodsPage', this.page)
-        localStorage.setItem('goodsFilterForm', JSON.stringify(this.filterForm));
-        this.getList()
-      },
-      handleRowEdit(index, row) {
-        this.$router.push({ name: 'goods_add', query: { id: row.id } })
-      },
-      handleRowDelete(index, row) {
 
-        this.$confirm('确定要删除?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
+    handlePageChange(val) {
+      this.page = val;
+      //保存到localStorage
+      localStorage.setItem("goodsPage", this.page);
+      localStorage.setItem("goodsFilterForm", JSON.stringify(this.filterForm));
+      this.getList();
+    },
+    handleRowEdit(index, row) {
+      this.$router.push({ name: "goods_add", query: { id: row.id } });
+    },
+    handleRowDelete(index, row) {
+      this.$confirm("确定要删除?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "error"
+      }).then(() => {
+        this.axios.post("goods/destory", { id: row.id }).then(response => {
+          console.log(response.data);
+          if (response.data.errno === 0) {
+            this.$message({
+              type: "success",
+              message: "删除成功!"
+            });
 
-          this.axios.post('商品/destory', { id: row.id }).then((response) => {
-            console.log(response.data)
-            if (response.data.errno === 0) {
-              this.$message({
-                type: 'success',
-                message: '删除成功!'
-              });
-
-              this.getList();
-            }
-          })
-
-
+            this.getList();
+          }
         });
-      },
-      onSubmitFilter() {
-        this.page = 1
-        this.getList()
-      },
-      getList() {
-        this.axios.get('goods', {
+      });
+    },
+    onSubmitFilter() {
+      this.page = 1;
+      this.getList();
+    },
+    getList() {
+      this.axios
+        .get("goods", {
           params: {
             page: this.page,
-            name: this.filterForm.name
+            name: this.filterForm.name,
+            category_id : this.filterForm.category_id,
           }
-        }).then((response) => {
-          this.tableData = response.data.data.data
-          this.page = response.data.data.currentPage
-          this.total = response.data.data.count
         })
-      }
-    },
-    components: {
-
-    },
-    mounted() {
-      this.getList();
+        .then(response => {
+          this.tableData = response.data.data.data;
+          this.page = response.data.data.currentPage;
+          this.total = response.data.data.count;
+        });
     }
+  },
+  components: {},
+  mounted() {
+    this.getCascaderCategory();
+    this.getList();
   }
-
+};
 </script>
 
 <style scoped>

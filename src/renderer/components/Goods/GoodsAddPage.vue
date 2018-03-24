@@ -26,13 +26,13 @@
 
           <el-form-item label="推荐类型">
             <el-radio-group v-model="infoForm.stock_type">
-              <el-radio-button label="0" :key="0">Amazon海淘直达</el-radio-button>
+              <el-radio-button label="0" :key="0">海外直购(amazon)</el-radio-button>
               <el-radio-button label="1" :key="1">海外产地直达</el-radio-button>
           </el-radio-group>
           </el-form-item>
 
-          <el-form-item label="所属分类">
-            <el-cascader :options="categoryOptions" :props="categoryCascaderConfig" placeholder="请选择分类" v-model="categorySelected" @change="handleChange" >
+          <el-form-item label="所属分类" prop="categorySelected">
+            <el-cascader  :options="categoryOptions" :props="categoryCascaderConfig" placeholder="请选择分类" v-model="categorySelected" @change="handleChange" >
             </el-cascader>
           </el-form-item>
           <!-- <el-form-item label="所属分类" prop="name">
@@ -58,13 +58,13 @@
                        :on-success="handleUploadImageSuccess" :headers="uploaderHeader" :data="{index:0,type:'poster'}">
               <img v-if="infoForm.list_pic_url" :src="infoForm.list_pic_url" class="image-show">
               <i v-else class="el-icon-plus image-uploader-icon"></i>
-              <div class="form-tip">图片尺寸：750*420</div>
+              <!-- <div class="form-tip">图片尺寸：750*420</div> -->
             </el-upload>
           </el-form-item>
 
 
 
-          <el-form-item label="价格" prop="retail_price" :rules="[{ type:'number', required: true,  message: '请填写价格', trigger:'blur'}]">
+          <el-form-item label="价格¥" prop="retail_price" :rules="[{ type:'number', required: true,  message: '请填写价格', trigger:'blur'}]">
             <el-input type='number' v-model.number="infoForm.retail_price"></el-input>
           </el-form-item>
 
@@ -91,7 +91,7 @@
             <el-input-number v-model="infoForm.sort_order" :min="1" :max="1000"></el-input-number>
           </el-form-item>
 
-          <el-form-item label="商品banner">
+          <el-form-item label="商品banner" prop="gallery">
               <div v-for="(item, curIndex) in infoForm.gallery" :key="item.img_url">
                 <el-upload  class="image-uploader" name="brand_pic"
                             :action="actionGoodsPic" :show-file-list="true"
@@ -142,7 +142,7 @@
 
 <script>
 import api from "@/config/api";
-import { log } from 'util';
+import { log } from "util";
 export default {
   data() {
     return {
@@ -150,29 +150,28 @@ export default {
         "X-Nideshop-Token": localStorage.getItem("token") || ""
       },
 
-      categoryOptions:[], // 分类数据
-        categoryCascaderConfig: {
-          value: 'id',
-          label: 'name',
-          children: 'children'
-        }, // 分类数据配置
-        categorySelected:[], // 默认选中的分类
-        
-        brandOptions:[], // 品牌数据
+      categoryOptions: [], // 分类数据
+      categoryCascaderConfig: {
+        value: "id",
+        label: "name",
+        children: "children"
+      }, // 分类数据配置
+      categorySelected: [], // 默认选中的分类
 
-      recommendChecked:0, // 推荐选中数据
+      brandOptions: [], // 品牌数据
 
-      actionGoodsPic : api.rootUrl+'/upload/brandPic',
-      
+      recommendChecked: 0, // 推荐选中数据
+
+      actionGoodsPic: api.rootUrl + "/upload/brandPic",
 
       infoForm: {
         id: 0,
-        
+
         name: "",
         list_pic_url: "",
         goods_desc: [],
-        deletedDescPics : [], // 删除的详情图片
-        
+        deletedDescPics: [], // 删除的详情图片
+
         pic_url: "",
         sort_order: 100,
         is_show: true,
@@ -181,30 +180,75 @@ export default {
         new_pic_url: "",
         new_sort_order: 10,
 
-        goods_number:0,
-        brand_id : null,
-        category_id:0,
-        is_on_sale:true,
-        is_hot:false,
-        stock_type:0,
-        retail_price:0,
+        goods_number: 0,
+        brand_id: null,
+        category_id: 0,
+        is_on_sale: true,
+        is_hot: false,
+        stock_type: 0,
+        retail_price: 0,
 
-        gallery:[], // 商品banner对象集合
-        deletedGalleries : [], // 删除的banner对象集合
+        gallery: [], // 商品banner对象集合
+        deletedGalleries: [] // 删除的banner对象集合
       },
       infoRules: {
         name: [{ required: true, message: "请输入名称", trigger: "blur" }],
-        brand:[{ required: true, type:"number", message: "请选择品牌", trigger: "blur" }],
+        brand: [
+          {
+            required: true,
+            type: "number",
+            message: "请选择品牌",
+            trigger: "blur"
+          }
+        ],
         goods_desc: [
           { required: false, message: "请输入简介", trigger: "blur" }
         ],
         list_pic_url: [
-          { type:"string", required: true, message: "请选择商品图片", trigger: "blur", transform(value) {
-            return value;
-            } }
+          {
+            type: "string",
+            required: true,
+            message: "请选择商品图片",
+            trigger: "blur",
+            transform(value) {
+              return value;
+            }
+          }
+        ],
+        gallery: [
+          {
+            type: "array",
+            required: true,
+            message: "请选择商品banner图片",
+            trigger: "blur",
+            transform(value) {
+              return value;
+            }
+          }
         ],
         goods_number_rule: [
-          { type:'number', required: true,  message: "请填写库存", trigger:"blur"}
+          {
+            type: "number",
+            required: true,
+            message: "请填写库存",
+            trigger: "blur"
+          }
+        ],
+
+        categorySelected: [
+          {
+            type: "array",
+            required: true,
+            message : "请选择所属分类",
+            validator: (rule, value, callback) => {
+              if (this.categorySelected.length <= 0) {
+                callback(new Error());
+              }else{
+                callback();
+              }
+            },
+            trigger: "change"
+          }
         ]
       }
     };
@@ -214,24 +258,17 @@ export default {
       this.$router.go(-1);
     },
 
-    handleChange(item)
-    {
-        this.infoForm.category_id = item[item.length-1];
+    handleChange(item) {
+      this.infoForm.category_id = item[item.length - 1];
     },
     onSubmitInfo() {
-
-      if(this.recommendChecked==1)
-      {
+      if (this.recommendChecked == 1) {
         this.infoForm.is_new = true;
         this.infoForm.is_hot = false;
-      }
-      else if(this.recommendChecked==2)
-      {
+      } else if (this.recommendChecked == 2) {
         this.infoForm.is_new = false;
         this.infoForm.is_hot = true;
-      }
-      else
-      {
+      } else {
         this.infoForm.is_new = false;
         this.infoForm.is_hot = false;
       }
@@ -258,7 +295,6 @@ export default {
       });
     },
     handleUploadImageSuccess(res, file) {
-      
       if (res.errno === 0) {
         switch (res.data.params.type) {
           //商品封面
@@ -268,101 +304,90 @@ export default {
 
           // 商品banner
           case "banner":
-          {
-            let index = parseInt(res.data.params.index);
-            if(index>=this.infoForm.gallery.length) // 新增图片
             {
-              let galleryObj = new Object;
-              galleryObj.id = 0;
-              galleryObj.goods_id = this.infoForm.id;
-              galleryObj.img_url = res.data.fileUrl;
-              this.infoForm.gallery.push(galleryObj);
+              let index = parseInt(res.data.params.index);
+              if (index >= this.infoForm.gallery.length) {
+                // 新增图片
+                let galleryObj = new Object();
+                galleryObj.id = 0;
+                galleryObj.goods_id = this.infoForm.id;
+                galleryObj.img_url = res.data.fileUrl;
+                this.infoForm.gallery.push(galleryObj);
+              } else {
+                // 替换图片
+                this.infoForm.gallery[index].img_url = res.data.fileUrl;
+              }
             }
-            else // 替换图片
-            {
-              this.infoForm.gallery[index].img_url = res.data.fileUrl;
-            }
-          }
             break;
 
           // 商品描述图片
           case "desc":
-          {
-            let index = parseInt(res.data.params.index);
-            if(index>=this.infoForm.goods_desc.length) // 新增图片
             {
-              this.infoForm.goods_desc.push(res.data.fileUrl);
+              let index = parseInt(res.data.params.index);
+              if (index >= this.infoForm.goods_desc.length) {
+                // 新增图片
+                this.infoForm.goods_desc.push(res.data.fileUrl);
+              } else {
+                // 替换图片
+                this.infoForm.goods_desc.splice(index, 1, res.data.fileUrl);
+              }
             }
-            else // 替换图片
-            {
-              this.infoForm.goods_desc.splice(index,1,res.data.fileUrl);
-            }
-          }
             break;
         }
       }
     },
 
-    /** 
+    /**
      *  处理删除图片
      * @param type 类型 desc、poster、gallery
      */
-    handleDeleteImg(type, index)
-    {
-
-      switch (type)
-      {
-          case "desc":
+    handleDeleteImg(type, index) {
+      switch (type) {
+        case "desc":
           {
-            if(index>=0 && index<this.infoForm.goods_desc.length)
-            {
+            if (index >= 0 && index < this.infoForm.goods_desc.length) {
               let deletedUrls = this.infoForm.goods_desc.splice(index, 1);
               this.infoForm.deletedDescPics.push(deletedUrls[0]);
             }
           }
           break;
 
-          case "banner":
+        case "banner":
           {
-            if(index>=0 && index<this.infoForm.gallery.length)
-            {
+            if (index >= 0 && index < this.infoForm.gallery.length) {
               let deletedObj = this.infoForm.gallery.splice(index, 1);
               this.infoForm.deletedGalleries.push(deletedObj[0]);
             }
           }
           break;
       }
-      
     },
 
     getCascaderCategory() {
-        this.axios.get('category/cascader').then((response) => {
-          this.categoryOptions = this.categoryOptions.concat(response.data.data);
-          this.handleCategorySelected();
-        });
-      },
-
-    handleCategorySelected()
-    {
-        if(this.categoryOptions.length>0 && this.infoForm.category_id >0)
-        {
-          this.categoryOptions.map((item) => {
-            item.children.map((itemChild)=>{
-              if (itemChild.id === this.infoForm.category_id) {
-                this.categorySelected = [item.id, this.infoForm.category_id];
-                return;
-              }
-            });
-          });
-        }
+      this.axios.get("category/cascader").then(response => {
+        this.categoryOptions = this.categoryOptions.concat(response.data.data);
+        this.handleCategorySelected();
+      });
     },
 
-    getBrand()
-    {
-        this.axios.get('brand', {params: {"size": 500}}).then((response) => {
-          this.brandOptions = this.brandOptions.concat(response.data.data.data);
-          this.handleCategorySelected();
+    handleCategorySelected() {
+      if (this.categoryOptions.length > 0 && this.infoForm.category_id > 0) {
+        this.categoryOptions.map(item => {
+          item.children.map(itemChild => {
+            if (itemChild.id === this.infoForm.category_id) {
+              this.categorySelected = [item.id, this.infoForm.category_id];
+              return;
+            }
+          });
         });
+      }
+    },
+
+    getBrand() {
+      this.axios.get("brand", { params: { size: 500 } }).then(response => {
+        this.brandOptions = this.brandOptions.concat(response.data.data.data);
+        this.handleCategorySelected();
+      });
     },
 
     getInfo() {
@@ -384,18 +409,13 @@ export default {
           resInfo.is_hot = resInfo.is_hot ? true : false;
           resInfo.is_show = resInfo.is_show ? true : false;
           resInfo.is_on_sale = resInfo.is_on_sale ? true : false;
-          resInfo.brand_id = resInfo.brand_id==0 ? null : resInfo.brand_id;
+          resInfo.brand_id = resInfo.brand_id == 0 ? null : resInfo.brand_id;
 
-          if(resInfo.is_new)
-          {
+          if (resInfo.is_new) {
             this.recommendChecked = 1;
-          } 
-          else if(resInfo.is_hot)
-          {
+          } else if (resInfo.is_hot) {
             this.recommendChecked = 2;
-          }
-          else
-          {
+          } else {
             this.recommendChecked = 0;
           }
 
@@ -426,7 +446,6 @@ export default {
   cursor: pointer;
   position: relative;
   overflow: hidden;
-  
 }
 
 .image-uploader .el-upload:hover {
@@ -449,10 +468,9 @@ export default {
   float: left;
 }
 
-.image-delete
-{
+.image-delete {
   overflow: hidden;
-  bottom:10px;
+  bottom: 10px;
 }
 
 .image-uploader.new-image-uploader {
@@ -478,6 +496,4 @@ export default {
   height: 100px;
   display: block;
 }
-
-
 </style>
