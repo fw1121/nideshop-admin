@@ -26,9 +26,9 @@
                         <div class="form-tip"></div>
                     </el-form-item>
                     <el-form-item label="图标" prop="wap_banner_url">
-                        <el-upload class="image-uploader" name="wap_banner_pic"
-                                   action="http://127.0.0.1:8360/admin/upload/categoryWapBannerPic" :show-file-list="false"
-                                   :on-success="handleUploadImageSuccess" :headers="uploaderHeader">
+                        <el-upload class="image-uploader" name="brand_pic"
+                                   :action="actionGoodsPic" :show-file-list="false"
+                                   :on-success="handleUploadImageSuccess" :headers="uploaderHeader" :data="{type:'wap_banner_url'}">
                             <img v-if="infoForm.wap_banner_url" :src="infoForm.wap_banner_url" class="image-show">
                             <i v-else class="el-icon-plus image-uploader-icon"></i>
                         </el-upload>
@@ -55,6 +55,8 @@
   export default {
     data() {
       return {
+        actionGoodsPic: api.rootUrl + "/upload/brandPic",
+
         uploaderHeader: {
           'X-Nideshop-Token': localStorage.getItem('token') || '',
         },
@@ -113,11 +115,11 @@
         });
       },
       handleUploadImageSuccess(res, file) {
-        if (res.errno === 0) {
-          switch (res.data.name) {
+          if (res.errno === 0) {
+          switch (res.data.params.type) {
+
             //分类图片
-            case 'wap_banner_url':
-//              this.$set('infoForm.wap_banner_url', res.data.fileUrl);
+            case "wap_banner_url":
               this.infoForm.wap_banner_url = res.data.fileUrl;
               break;
           }
