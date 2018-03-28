@@ -22,6 +22,14 @@
                         <el-cascader :options="categoryOptions" :props="categoryCascaderConfig" placeholder="请选择分类" v-model="categorySelected" @change="handleChange" >
                         </el-cascader>
                     </el-form-item>
+
+                    <el-form-item label="排序类型">
+                    <el-radio-group v-model="filterForm.sortChecked">
+                      <el-radio-button label="0" :key="0">排序号</el-radio-button>
+                      <el-radio-button label="1" :key="1">添加时间</el-radio-button>
+                    </el-radio-group>
+                    </el-form-item>
+
                     <el-form-item>
                         <el-button type="primary" @click="onSubmitFilter">查询</el-button>
                     </el-form-item>
@@ -84,8 +92,10 @@ export default {
       filterForm: {
         name: "",
         category_id: '',
+        sortChecked : 0,
       },
       tableData: [],
+      
 
       categoryOptions: [{value:"", label:"请选择分类"}], // 分类数据
       categoryCascaderConfig: {
@@ -160,6 +170,7 @@ export default {
             page: this.page,
             name: this.filterForm.name,
             category_id : this.filterForm.category_id,
+            sortChecked : this.filterForm.sortChecked,
           }
         })
         .then(response => {
