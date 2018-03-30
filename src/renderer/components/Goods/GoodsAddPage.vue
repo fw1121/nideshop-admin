@@ -53,7 +53,7 @@
           </el-form-item> -->
 
           <el-form-item label="商品封面" prop="list_pic_url">
-            <el-upload class="image-uploader" name="brand_pic"
+            <el-upload class="image-uploader" name="pic"
                        :action="actionGoodsPic" :show-file-list="true"
                        :on-success="handleUploadImageSuccess" :headers="uploaderHeader" :data="{index:0,type:'poster'}">
               <img v-if="infoForm.list_pic_url" :src="infoForm.list_pic_url" class="image-show">
@@ -102,7 +102,7 @@
 
           <el-form-item label="商品banner" prop="gallery">
               <div v-for="(item, curIndex) in infoForm.gallery" :key="item.img_url">
-                <el-upload  class="image-uploader" name="brand_pic"
+                <el-upload  class="image-uploader" name="pic"
                             :action="actionGoodsPic" :show-file-list="true"
                             :on-success="handleUploadImageSuccess" :headers="uploaderHeader" :data="{index:curIndex,type:'banner'}">
                             
@@ -113,7 +113,7 @@
                 <el-button class='image-delete' size="small" type="danger" @click="handleDeleteImg('banner', curIndex)">删除</el-button>    
               </div>
 
-            <el-upload v-if="infoForm.gallery.length<4" class="image-uploader" name="brand_pic"
+            <el-upload v-if="infoForm.gallery.length<4" class="image-uploader" name="pic"
                         :action="actionGoodsPic" :show-file-list="true"
                         :on-success="handleUploadImageSuccess" :headers="uploaderHeader" :data="{index:infoForm.gallery.length,type:'banner'}">
                 <i class="el-icon-plus image-uploader-icon"></i>
@@ -122,7 +122,7 @@
 
           <el-form-item label="商品详情">
               <div v-for="(item, curIndex) in infoForm.goods_desc" :key="item">
-                <el-upload  class="image-uploader" name="brand_pic"
+                <el-upload  class="image-uploader" name="pic"
                             :action="actionGoodsPic" :show-file-list="true"
                             :on-success="handleUploadImageSuccess" :headers="uploaderHeader" :data="{index:curIndex,type:'desc'}">
                     <img v-if="item" :src="item" class="image-show">
@@ -131,7 +131,7 @@
                 <el-button class='image-delete' size="small" type="danger" @click="handleDeleteImg('desc', curIndex)">删除</el-button>    
               </div>
 
-            <el-upload class="image-uploader" name="brand_pic"
+            <el-upload class="image-uploader" name="pic"
                         :action="actionGoodsPic" :show-file-list="true"
                         :on-success="handleUploadImageSuccess" :headers="uploaderHeader" :data="{index:infoForm.goods_desc.length,type:'desc'}">
                 <i class="el-icon-plus image-uploader-icon"></i>
