@@ -63,6 +63,15 @@
           </el-form-item>
 
 
+          <el-form-item label="商品属性" name="attribute" prop="attribute">
+            <div v-for="(item, curIndex) in infoForm.attribute" :key="item.hashCode">
+              <el-input style="width:200px;margin-right:5px;margin-bottom:5px;" placeholder="请输入属性名称，如：颜色" v-model="item.name" ></el-input>
+              <el-input style="width:200px" placeholder="请输入属性值，如：白色" v-model="item.value"></el-input>
+              <el-button size="small" type="danger" @click="handleRemoveAttribute(curIndex)">删除</el-button>    
+            </div>
+
+            <el-button size="small" type="primary" @click="handleAddAttribute()">新增</el-button>    
+          </el-form-item>
 
           <el-form-item label="价格¥" prop="retail_price" :rules="[{ type:'number', required: true,  message: '请填写价格', trigger:'blur'}]">
             <el-input type='number' v-model.number="infoForm.retail_price"></el-input>
@@ -189,10 +198,28 @@ export default {
         retail_price: 0,
 
         gallery: [], // 商品banner对象集合
-        deletedGalleries: [] // 删除的banner对象集合
+        deletedGalleries: [], // 删除的banner对象集合
+        attribute : []
       },
       infoRules: {
         name: [{ required: true, message: "请输入名称", trigger: "blur" }],
+        attribute: [{ type:'array', required: true, message: "请输入完整的商品属性", trigger: "blur" ,validator: (rule, value, callback) => {
+              if (value.length > 0) {
+                  for(let i=0;i<value.length;++i)
+                  {
+                    let item = value[i];
+                    if(item.name=='' || item.value=='')
+                    {
+                      callback(new Error());
+                      return;
+                    }
+                  }
+                  callback();
+                }else{
+                  callback();
+                }
+            }}],
+            
         brand: [
           {
             required: true,
@@ -256,6 +283,20 @@ export default {
   methods: {
     goBackPage() {
       this.$router.go(-1);
+    },
+
+    handleRemoveAttribute(index)
+    {
+        if(index>=0&&index<this.infoForm.attribute.length)
+        {
+          this.infoForm.attribute.splice(index, 1);
+        }
+    },
+
+    handleAddAttribute()
+    {
+        let obj = {"name":"", "value":""};
+        this.infoForm.attribute.push(obj);
     },
 
     handleChange(item) {
