@@ -55,7 +55,7 @@
           <el-form-item label="商品封面" prop="list_pic_url">
             <el-upload class="image-uploader" name="pic"
                        :action="actionGoodsPic" :show-file-list="true"
-                       :on-success="handleUploadImageSuccess" :headers="uploaderHeader" :data="{index:0,type:'poster'}">
+                       :on-success="handleUploadImageSuccess" :headers="uploaderHeader" :data="{index:0,type:'poster', preUrl:infoForm.list_pic_url}">
               <img v-if="infoForm.list_pic_url" :src="infoForm.list_pic_url" class="image-show">
               <i v-else class="el-icon-plus image-uploader-icon"></i>
               <!-- <div class="form-tip">图片尺寸：750*420</div> -->
@@ -104,7 +104,7 @@
               <div v-for="(item, curIndex) in infoForm.gallery" :key="item.img_url">
                 <el-upload  class="image-uploader" name="pic"
                             :action="actionGoodsPic" :show-file-list="true"
-                            :on-success="handleUploadImageSuccess" :headers="uploaderHeader" :data="{index:curIndex,type:'banner'}">
+                            :on-success="handleUploadImageSuccess" :headers="uploaderHeader" :data="{index:curIndex, type:'banner',preUrl:item.img_url}">
                             
                     <img v-if="item.img_url" :src="item.img_url" class="image-show">
                     <i v-else class="el-icon-plus image-uploader-icon"></i>
@@ -113,7 +113,7 @@
                 <el-button class='image-delete' size="small" type="danger" @click="handleDeleteImg('banner', curIndex)">删除</el-button>    
               </div>
 
-            <el-upload v-if="infoForm.gallery.length<4" class="image-uploader" name="pic"
+            <el-upload v-if="infoForm.gallery.length<8" class="image-uploader" name="pic"
                         :action="actionGoodsPic" :show-file-list="true"
                         :on-success="handleUploadImageSuccess" :headers="uploaderHeader" :data="{index:infoForm.gallery.length,type:'banner'}">
                 <i class="el-icon-plus image-uploader-icon"></i>
@@ -124,7 +124,7 @@
               <div v-for="(item, curIndex) in infoForm.goods_desc" :key="item">
                 <el-upload  class="image-uploader" name="pic"
                             :action="actionGoodsPic" :show-file-list="true"
-                            :on-success="handleUploadImageSuccess" :headers="uploaderHeader" :data="{index:curIndex,type:'desc'}">
+                            :on-success="handleUploadImageSuccess" :headers="uploaderHeader" :data="{index:curIndex,type:'desc', preUrl:item}">
                     <img v-if="item" :src="item" class="image-show">
                     <i v-else class="el-icon-plus image-uploader-icon"></i>
                 </el-upload>                
@@ -340,13 +340,28 @@ export default {
         switch (res.data.params.type) {
           //商品封面
           case "poster":
-            this.infoForm.list_pic_url = res.data.fileUrl;
+          {
+              let preUrl = res.data.params.preUrl; // 之前的url，如果存在，需要删除
+              if(preUrl)
+              {
+                this.infoForm.deletedDescPics.push(preUrl);
+              }
+              this.infoForm.list_pic_url = res.data.fileUrl;
+          }
+            
             break;
 
           // 商品banner
           case "banner":
             {
               let index = parseInt(res.data.params.index);
+
+              let preUrl = res.data.params.preUrl; // 之前的url，如果存在，需要删除
+              if(preUrl)
+              {
+                this.infoForm.deletedDescPics.push(preUrl);
+              }
+
               if (index >= this.infoForm.gallery.length) {
                 // 新增图片
                 let galleryObj = new Object();
@@ -365,6 +380,13 @@ export default {
           case "desc":
             {
               let index = parseInt(res.data.params.index);
+              let preUrl = res.data.params.preUrl; // 之前的url，如果存在，需要删除
+
+              if(preUrl)
+              {
+                this.infoForm.deletedDescPics.push(preUrl);
+              }
+
               if (index >= this.infoForm.goods_desc.length) {
                 // 新增图片
                 this.infoForm.goods_desc.push(res.data.fileUrl);
