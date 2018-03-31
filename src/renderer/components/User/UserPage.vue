@@ -18,6 +18,9 @@
 					<el-form-item label="会员名称">
 						<el-input v-model="filterForm.name" placeholder="会员名称"></el-input>
 					</el-form-item>
+					<el-form-item label="会员昵称">
+						<el-input v-model="filterForm.nickname" placeholder="会员昵称"></el-input>
+					</el-form-item>
 					<el-form-item>
 						<el-button type="primary" @click="onSubmitFilter">查询</el-button>
 					</el-form-item>
@@ -31,14 +34,27 @@
 					</el-table-column>
 					<el-table-column prop="nickname" label="呢称">
 					</el-table-column>
-					<el-table-column prop="gender" label="性别" width="120">
+					<el-table-column prop="gender" label="性别" width="80">
 						<template scope="scope">
-							{{ scope.row.gender == 1 ? '女' : '男' }}
+							{{ scope.row.gender == 1 ? '男' : '女' }}
+						</template>
+					</el-table-column>
+					<el-table-column prop="avatar" label="头像" width="100">
+						<template scope="scope">
+							<img v-if="scope.row.avatar" :src="scope.row.avatar" class="image-show">
 						</template>
 					</el-table-column>
 					<el-table-column prop="mobile" label="手机号">
 					</el-table-column>
 					<el-table-column prop="register_time" label="注册时间">
+						<template scope="scope">
+							{{ scope.row.register_time | formatDate }}
+						</template>
+					</el-table-column>
+					<el-table-column prop="register_time" label="最近登录时间">
+						<template scope="scope">
+							{{ scope.row.last_login_time | formatDate }}
+						</template>
 					</el-table-column>
 					<el-table-column label="操作" width="140">
 						<template scope="scope">
@@ -58,13 +74,16 @@
 
 <script>
 
+
+import DateUtil from "@/js/DateUtil";
 export default {
 	data() {
 		return {
 			page: 1,
 			total: 0,
 			filterForm: {
-				name: ''
+				name: '',
+				nickname:'',
 			},
 			tableData: []
 		}
@@ -111,7 +130,8 @@ export default {
 			this.axios.get('user', {
 				params: {
 					page: this.page,
-					name: this.filterForm.name
+					name: this.filterForm.name,
+					nickname: this.filterForm.nickname,
 				}
 			}).then((response) => {
                 this.tableData = response.data.data.data
@@ -125,11 +145,24 @@ export default {
 	},
 	mounted() {
 		this.getList();
-	}
+	},
+
+	filters: {
+        formatDate(time) {
+			var date = new Date(time*1000);
+            return DateUtil.formatDate(date, "yyyy-MM-dd hh:mm:ss");
+        }
+    }
+
 }
 
 </script>
 
-<style scoped>
+<style>
+.image-show {
+  width: 60px;
+  height: 60px;
+  display: block;
+}
 
 </style>

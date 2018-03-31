@@ -57,6 +57,10 @@
                     <i class="fa fa-circle"></i>
                     <span>专题管理</span>
                 </el-menu-item>
+                <el-menu-item index="/dashboard/operate/banner">
+                    <i class="fa fa-circle"></i>
+                    <span>首页banner管理</span>
+                </el-menu-item>
             </el-submenu>
             <!--<el-submenu index="total">-->
                 <!--<template slot="title">-->

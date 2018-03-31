@@ -41,6 +41,11 @@
                     </el-table-column>
                     <el-table-column prop="name" label="商品名称">
                     </el-table-column>
+                    <el-table-column prop="list_pic_url" label="封面" width="150">
+                      <template scope="scope">
+                        <img v-if="scope.row.list_pic_url" :src="scope.row.list_pic_url" class="image-show">
+                      </template>
+                    </el-table-column>
                     <el-table-column prop="stock_type" label="商品类型" width="120">
                         <template scope="scope">
                             {{ scope.row.stock_type == 1 ? '海外产地直达' : '海外直购' }}
@@ -50,7 +55,7 @@
                     </el-table-column>
                     <el-table-column prop="goods_number" label="库存" width="120">
                     </el-table-column>
-                    <el-table-column prop="is_new" label="新品" width="80">
+                    <!-- <el-table-column prop="is_new" label="新品" width="80">
                         <template scope="scope">
                             {{ scope.row.is_new == 1 ? '是' : '否' }}
                         </template>
@@ -59,7 +64,7 @@
                         <template scope="scope">
                             {{ scope.row.is_hot == 1 ? '是' : '否' }}
                         </template>
-                    </el-table-column>
+                    </el-table-column> -->
                     <el-table-column prop="is_show" label="上架" width="80">
                         <template scope="scope">
                             {{ scope.row.is_on_sale == 1 ? '是' : '否' }}
@@ -188,6 +193,13 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
+
+.image-show {
+  width: 120px;
+  height: 68px;
+  display: block;
+  float: left;
+}
 
 </style>

@@ -66,6 +66,16 @@ export default new Router({
                     name: 'topic',
                     component: require('@/components/Topic/TopicPage')
                 },
+                {
+                    path: 'operate/banner',
+                    name: 'topic',
+                    component: require('@/components/Banner/BannerPage')
+                },
+                {
+                    path: 'operate/banner/add',
+                    name: 'banner_add',
+                    component: require('@/components/Banner/BannerAddPage')
+                  },
               {
                 path: 'operate/topic/add',
                 name: 'topic_add',

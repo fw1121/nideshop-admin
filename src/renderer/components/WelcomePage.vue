@@ -6,7 +6,7 @@
       </el-breadcrumb>
     </div>
     <div class="content-main">
-
+        欢迎使用骨朵儿海外精选后台管理系统
     </div>
   </div>
 </template>

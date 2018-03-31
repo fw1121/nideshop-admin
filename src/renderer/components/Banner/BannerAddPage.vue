@@ -4,7 +4,7 @@
             <el-breadcrumb class="breadcrumb" separator="/">
                 <el-breadcrumb-item :to="{ name: 'dashboard' }">首页</el-breadcrumb-item>
                 <el-breadcrumb-item>商城运营</el-breadcrumb-item>
-                <el-breadcrumb-item>{{infoForm.id ? '编辑专题' : '添加专题'}}</el-breadcrumb-item>
+                <el-breadcrumb-item>{{infoForm.id ? '编辑首页Banner' : '添加首页Banner'}}</el-breadcrumb-item>
             </el-breadcrumb>
             <div class="operation-nav">
                 <el-button type="primary" @click="goBackPage" icon="arrow-left">返回列表</el-button>
@@ -17,51 +17,35 @@
                     <el-form-item prop="deletedPics">
                     </el-form-item>
 
-                    <el-form-item label="标题" prop="title">
-                        <el-input v-model="infoForm.title"></el-input>
+                    <el-form-item label="标题" prop="name">
+                        <el-input v-model="infoForm.name"></el-input>
                     </el-form-item>
-                    <el-form-item label="子标题" prop="subtitle">
-                        <el-input type="textarea" v-model="infoForm.subtitle" :rows="3"></el-input>
-                        <div class="form-tip"></div>
-                    </el-form-item>
-                    <el-form-item label="缩略图" prop="scene_pic_url">
+                    <el-form-item label="封面" prop="image_url">
                         <el-upload class="image-uploader" name="pic"
                                    :action="actionGoodsPic"
-                                   :on-success="handleUploadImageSuccess" :headers="uploaderHeader" :data="{type:'scene_pic_url', preUrl:infoForm.scene_pic_url}">
-                            <img v-if="infoForm.scene_pic_url" :src="infoForm.scene_pic_url" class="image-show" >
+                                   :on-success="handleUploadImageSuccess" :headers="uploaderHeader" :data="{type:'image_url', preUrl:infoForm.image_url}">
+                            <img v-if="infoForm.image_url" :src="infoForm.image_url" class="image-show" >
                             <i v-else class="el-icon-plus image-uploader-icon"></i>
                         </el-upload>
                         <div class="form-tip">图片尺寸：750*415</div>
                     </el-form-item>
 
-                    
-                    <el-form-item label="价格¥">
-                        <el-input type='number' v-model="infoForm.price_info" :min="0" :max="999999"></el-input>
+                    <el-form-item label="跳转类型">
+                      <el-radio-group v-model="infoForm.media_type">
+                        <el-radio-button label="0" :key="0">商品</el-radio-button>
+                        <el-radio-button label="1" :key="1">专题</el-radio-button>
+                      </el-radio-group>
+                    </el-form-item>
+
+                    <el-form-item label="跳转id">
+                     <el-input type='number' v-model="infoForm.media_id" :min="0"></el-input>
                     </el-form-item>
 
                     <el-form-item label="排序">
-                        <el-input-number v-model="infoForm.sort_order" :min="1" :max="1000"></el-input-number>
+                        <el-input-number v-model="infoForm.ad_position_id" :min="1" :max="1000"></el-input-number>
                     </el-form-item>
                     <el-form-item label="启用">
-                        <el-switch v-model="infoForm.is_show"></el-switch>
-                    </el-form-item>
-
-                    <el-form-item label="专题详情">
-                        <div v-for="(item, curIndex) in infoForm.content" :key="item">
-                            <el-upload  class="image-uploader" name="pic"
-                                        :action="actionGoodsPic" :show-file-list="true"
-                                        :on-success="handleUploadImageSuccess" :headers="uploaderHeader" :data="{index:curIndex,type:'content',preUrl:item}">
-                                <img v-if="item" :src="item" class="image-show">
-                                <i v-else class="el-icon-plus image-uploader-icon"></i>
-                            </el-upload>                
-                            <el-button class='image-delete' size="small" type="danger" @click="handleDeleteImg('content', curIndex)">删除</el-button>    
-                        </div>
-
-                        <el-upload class="image-uploader" name="pic"
-                                    :action="actionGoodsPic" :show-file-list="true"
-                                    :on-success="handleUploadImageSuccess" :headers="uploaderHeader" :data="{index:infoForm.content.length,type:'content'}">
-                            <i class="el-icon-plus image-uploader-icon"></i>
-                        </el-upload>
+                        <el-switch v-model="infoForm.enabled"></el-switch>
                     </el-form-item>
 
                     <el-form-item>
@@ -85,21 +69,21 @@ export default {
       actionGoodsPic: api.rootUrl + "/upload/brandPic",
       infoForm: {
         id: 0,
-        title: "",
-        subtitle: "",
-        sort_order: 100,
-        is_show: true,
-        scene_pic_url: "",
-        content : [],
+        name: "",
+        ad_position_id: 100,
+        media_type:0, // 跳转类型：0-商品，1-专题
+        media_id:0, // 跳转id，如果meida_type为0则为商品id，如果为1则为专题id
+        enabled: true,
+        image_url: "",
         deletedPics: [], // 删除的图片
         price_info : 0,
       },
       infoRules: {
-        title: [{ required: true, message: "请输入标题", trigger: "blur" }],
+        name: [{ required: true, message: "请输入标题", trigger: "blur" }],
         subtitle: [
           { required: true, message: "请输入子标题", trigger: "blur" }
         ],
-        scene_pic_url: [
+        image_url: [
           { required: true, message: "请选择缩略图", trigger: "blur" }
         ]
       }
@@ -112,7 +96,7 @@ export default {
     onSubmitInfo() {
       this.$refs["infoForm"].validate(valid => {
         if (valid) {
-          this.axios.post("topic/store", this.infoForm).then(response => {
+          this.axios.post("banner/store", this.infoForm).then(response => {
             if (response.data.errno === 0) {
               this.$message({
                 type: "success",
@@ -135,8 +119,8 @@ export default {
     handleUploadImageSuccess(res, file) {
       if (res.errno === 0) {
         switch (res.data.params.type) {
-          // 专题封面
-          case "scene_pic_url":
+          // 封面
+          case "image_url":
           {
             let preUrl = res.data.params.preUrl; // 之前的url，如果存在，需要删除
 
@@ -144,30 +128,8 @@ export default {
               {
                 this.infoForm.deletedPics.push(preUrl);
               }
-              this.infoForm.scene_pic_url = res.data.fileUrl;
+              this.infoForm.image_url = res.data.fileUrl;
           }
-            
-            break;
-
-          // 商品描述图片
-          case "content":
-            {
-              let index = parseInt(res.data.params.index);
-              let preUrl = res.data.params.preUrl; // 之前的url，如果存在，需要删除
-
-              if(preUrl)
-              {
-                this.infoForm.deletedPics.push(preUrl);
-              }
-
-              if (index >= this.infoForm.content.length) {
-                // 新增图片
-                this.infoForm.content.push(res.data.fileUrl);
-              } else {
-                // 替换图片
-                this.infoForm.content.splice(index, 1, res.data.fileUrl);
-              }
-            }
             break;
         }
       }
@@ -198,14 +160,14 @@ export default {
       //加载专题详情
       let that = this;
       this.axios
-        .get("topic/info", {
+        .get("banner/info", {
           params: {
             id: that.infoForm.id
           }
         })
         .then(response => {
           let resInfo = response.data.data;
-          resInfo.is_show = resInfo.is_show ? true : false;
+          resInfo.enabled = resInfo.enabled ? true : false;
           Object.assign(that.infoForm, resInfo);
         //   that.infoForm = resInfo;
         });
