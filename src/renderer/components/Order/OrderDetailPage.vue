@@ -33,6 +33,16 @@
                         {{ infoForm.add_time | formatDate }}
                     </el-form-item>
                     
+                    <el-form-item label="快递公司" prop="shipper_id">
+                      <el-select v-model="infoForm.expressInfo.shipper_id" placeholder="请选择快递公司">
+                        <el-option v-for="item in infoForm.shipperInfos" :key="item.id" :label="item.name" :value="item.id"></el-option>
+                      </el-select>
+                    </el-form-item>
+
+                    <el-form-item label="快递单号" prop="logistic_code">
+                      <el-input v-model="infoForm.expressInfo.logistic_code" placeholder='请填写快递单号'></el-input>
+                    </el-form-item>
+
                     <el-form-item label="收货人" prop="consignee">
                         {{infoForm.consignee}}
                     </el-form-item>
@@ -89,6 +99,11 @@ export default {
         postscript: "",
         detailAddress: "",
         goodsInfos:[],
+        shipperInfos:[],
+        expressInfo:{
+          logistic_code:'',
+          shipper_id:null,
+        },
       }
     };
   },
@@ -112,10 +127,24 @@ export default {
         .then(response => {
           console.log(response.data);
           let resInfo = response.data.data;
-          that.infoForm = resInfo;
+          Object.assign(that.infoForm, resInfo);
           this.pageLoading = false;
+
         });
     },
+
+    getShipperInfos()
+    {
+      let that = this;
+      this.axios
+        .get("order/shipperInfos", {})
+        .then(response => {
+          console.log(response.data);
+          let resInfo = response.data.data;
+          that.infoForm.shipperInfos= resInfo;
+        });
+    },
+
 
     /** 修改订单状态 */
     modifyOrderStatus() {
@@ -166,7 +195,7 @@ export default {
             } else {
               this.$message({
                 type: "error",
-                message: "保存失败"
+                message: response.data.errmsg
               });
             }
           });
@@ -181,11 +210,12 @@ export default {
     console.log(this.$route.query);
     this.infoForm.id = this.$route.query.id || 0;
     this.getInfo();
+    this.getShipperInfos();
   },
 
   filters: {
     formatDate(time) {
-      var date = new Date(time * 1000);
+      var date = new Date(time * 1000 * 1000);
       return DateUtil.formatDate(date, "yyyy-MM-dd hh:mm:ss");
     }
   }
