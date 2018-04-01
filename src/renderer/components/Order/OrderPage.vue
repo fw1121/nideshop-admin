@@ -78,7 +78,7 @@
         this.getList()
       },
       handleRowEdit(index, row) {
-        this.$router.push({ name: 'order_add', query: { id: row.id } })
+        this.$router.push({ name: 'order_detail', query: { id: row.id } })
       },
       handleRowDelete(index, row) {
 
