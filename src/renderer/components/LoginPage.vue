@@ -26,6 +26,7 @@
     </div>
 </template>
 <script>
+import api from '@/config/api';
     export default {
         data() {
             return {
@@ -55,8 +56,8 @@
                     }
 
                     this.loading = true;
-
-                    this.axios.post('http://127.0.0.1:8360/admin/auth/login', {
+                    let actionLogin = api.rootUrl + "/auth/login";
+                    this.axios.post(actionLogin, {
                         username: this.form.username,
                         password: this.form.password
                     }).then((res) => {
@@ -70,7 +71,7 @@
                         } else {
                             this.$message({
                                 type: 'error',
-                                title: res.data.errmsg
+                                message: res.data.errmsg
                             })
                         }
 
