@@ -60,7 +60,7 @@
 
                     <el-form-item label="商品详情">
                         
-                        <div v-for="(item) in infoForm.goodsInfos" :key="item.list_pic_url">
+                        <div v-for="item in infoForm.goodsInfos" :key="item.list_pic_url">
                             <div class="image-uploader"> 
                                 <img v-if="item.list_pic_url" :src="item.list_pic_url" class="image-show">
                                 {{item.name}}
@@ -129,7 +129,6 @@ export default {
           let resInfo = response.data.data;
           Object.assign(that.infoForm, resInfo);
           this.pageLoading = false;
-
         });
     },
 
