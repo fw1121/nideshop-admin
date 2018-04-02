@@ -48,7 +48,7 @@
                     </el-table-column>
                     <el-table-column prop="stock_type" label="商品类型" width="120">
                         <template scope="scope">
-                            {{ scope.row.stock_type == 1 ? '海外产地直达' : '海外直购' }}
+                            {{ scope.row.stock_type == 1 ? '海外产地直达' : scope.row.stock_type == 2 ? '海外直购' : '其他' }}
                         </template>
                     </el-table-column>
                     <el-table-column prop="retail_price" label="售价¥" width="120">

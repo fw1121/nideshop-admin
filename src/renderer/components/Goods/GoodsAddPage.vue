@@ -28,6 +28,7 @@
             <el-radio-group v-model="infoForm.stock_type">
               <el-radio-button label="0" :key="0">海外直购(amazon)</el-radio-button>
               <el-radio-button label="1" :key="1">海外产地直达</el-radio-button>
+              <el-radio-button label="9" :key="9">其他</el-radio-button>
           </el-radio-group>
           </el-form-item>
 
