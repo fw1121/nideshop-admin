@@ -33,6 +33,9 @@
                     <el-table-column prop="order_sn" label="订单号">
                     </el-table-column>
                     <el-table-column prop="add_time" label="下单时间">
+                        <template scope="scope">
+                          {{ scope.row.add_time | formatDate }}
+                        </template>
                     </el-table-column>
                     <el-table-column prop="consignee" label="收货人">
                     </el-table-column>
@@ -57,7 +60,7 @@
 </template>
 
 <script>
-
+import DateUtil from "@/js/DateUtil";
   export default {
     data() {
       return {
@@ -126,6 +129,12 @@
     },
     mounted() {
       this.getList();
+    },
+    filters: {
+        formatDate(time) {
+			      var date = new Date(time*1000*1000);
+            return DateUtil.formatDate(date, "yyyy-MM-dd hh:mm:ss");
+        }
     }
   }
 

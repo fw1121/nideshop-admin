@@ -6,16 +6,19 @@
       </el-breadcrumb>
     </div>
     <div class="content-main">
-        欢迎使用骨朵儿海外精选后台管理系统
+        欢迎使用骨朵儿海外精选后台管理系统{{version}}
     </div>
   </div>
 </template>
 
 <script>
+
+ import api from '@/config/api';
   export default {
     data() {
       return {
-        dialogVisible: false
+        dialogVisible: false,
+        version : api.version,
       }
     },
     components: {

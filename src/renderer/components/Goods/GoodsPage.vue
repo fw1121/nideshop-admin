@@ -81,7 +81,7 @@
                 </el-table>
             </div>
             <div class="page-box">
-                <el-pagination @current-change="handlePageChange" :current-page="page" :page-size="10" layout="total, prev, pager, next, jumper" :total="total">
+                <el-pagination @current-change="handlePageChange" :current-page="page" :page-size="20" layout="total, prev, pager, next, jumper" :total="total">
                 </el-pagination>
             </div>
         </div>
@@ -125,17 +125,21 @@ export default {
     handleCategorySelected() {
       if (this.categoryOptions.length > 0 && this.filterForm.category_id > 0) {
         this.categoryOptions.map(item => {
-          item.children.map(itemChild => {
-            if (itemChild.id === this.filterForm.category_id) {
-              this.categorySelected = [item.id, this.filterForm.category_id];
-              return;
-            }
-          });
+          if(item.children)
+          {
+            item.children.map(itemChild => {
+              if (itemChild.id === this.filterForm.category_id) {
+                this.categorySelected = [item.id, this.filterForm.category_id];
+                return;
+              }
+            });
+          }
         });
       }
     },
 
     handlePageChange(val) {
+    //  console.log("xxx handlePageChange:" + val);
       this.page = val;
       //保存到localStorage
       localStorage.setItem("goodsPage", this.page);
@@ -152,7 +156,6 @@ export default {
         type: "error"
       }).then(() => {
         this.axios.post("goods/destory", { id: row.id }).then(response => {
-          console.log(response.data);
           if (response.data.errno === 0) {
             this.$message({
               type: "success",
@@ -165,10 +168,14 @@ export default {
       });
     },
     onSubmitFilter() {
+
+      localStorage.setItem("goodsFilterForm", JSON.stringify(this.filterForm));
+ //console.log("xxx onSubmitFilter:" + 1);
       this.page = 1;
       this.getList();
     },
     getList() {
+
       this.axios
         .get("goods", {
           params: {
@@ -180,6 +187,7 @@ export default {
         })
         .then(response => {
           this.tableData = response.data.data.data;
+           //console.log("xxx getList:" + response.data.data.currentPage);
           this.page = response.data.data.currentPage;
           this.total = response.data.data.count;
         });
@@ -187,9 +195,30 @@ export default {
   },
   components: {},
   mounted() {
+    // let goodsPage = localStorage.getItem("goodsPage");
+
+    // if(goodsPage && goodsPage!='')
+    // {
+    //   console.log("xxx mounted:" + goodsPage);
+    //   this.page = parseInt(goodsPage);
+    // }
+
+    let savedFilterForm = localStorage.getItem("goodsFilterForm");
+
+    if(savedFilterForm)
+    {
+      try{
+          savedFilterForm = JSON.parse(savedFilterForm);
+          Object.assign(this.filterForm, savedFilterForm);
+      }catch(e)
+      {
+      }
+    }
+
     this.getCascaderCategory();
     this.getList();
-  }
+  },
+
 };
 </script>
 
