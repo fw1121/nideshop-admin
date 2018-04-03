@@ -26,7 +26,7 @@
                         <div class="form-tip"></div>
                     </el-form-item>
                     <el-form-item label="图标" prop="wap_banner_url">
-                        <el-upload class="image-uploader" name="brand_pic"
+                        <el-upload class="image-uploader" name="pic"
                                    :action="actionGoodsPic" :show-file-list="false"
                                    :on-success="handleUploadImageSuccess" :headers="uploaderHeader" :data="{type:'wap_banner_url'}">
                             <img v-if="infoForm.wap_banner_url" :src="infoForm.wap_banner_url" class="image-show">

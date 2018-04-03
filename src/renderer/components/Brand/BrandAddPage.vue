@@ -20,10 +20,11 @@
                         <el-input type="textarea" v-model="infoForm.simple_desc" :rows="3"></el-input>
                         <div class="form-tip"></div>
                     </el-form-item>
+                    
                     <el-form-item label="品牌图片" prop="list_pic_url">
-                        <el-upload class="image-uploader" name="brand_pic"
+                        <el-upload class="image-uploader" name="pic"
                                    :action="actionBrandPic" :show-file-list="false"
-                                   :on-success="handleUploadImageSuccess" :headers="uploaderHeader">
+                                   :on-success="handleUploadImageSuccess" :headers="uploaderHeader" :data="{type:'brand_pic'}">
                             <img v-if="infoForm.list_pic_url" :src="infoForm.list_pic_url" class="image-show">
                             <i v-else class="el-icon-plus image-uploader-icon"></i>
                         </el-upload>
@@ -121,15 +122,24 @@
                 });
             },
             handleUploadImageSuccess(res, file) {
+                // if (res.errno === 0) {
+                //     switch (res.data.name) {
+                //         //品牌图片
+                //         case 'brand_pic':
+                //             this.$set('infoForm.list_pic_url', res.data.fileUrl);
+                //             break;
+                //         case 'brand_new_pic':
+                //             this.$set('infoForm.new_pic_url', res.data.fileUrl);
+                //             break;
+                //     }
+                // }
+
+
                 if (res.errno === 0) {
-                    switch (res.data.name) {
-                        //品牌图片
-                        case 'brand_pic':
-                            this.$set('infoForm.list_pic_url', res.data.fileUrl);
-                            break;
-                        case 'brand_new_pic':
-                            this.$set('infoForm.new_pic_url', res.data.fileUrl);
-                            break;
+                    switch (res.data.params.type) {
+                        case "brand_pic":
+                        this.infoForm.list_pic_url = res.data.fileUrl;
+                        break;
                     }
                 }
             },
