@@ -33,13 +33,13 @@
                         {{ infoForm.add_time | formatDate }}
                     </el-form-item>
                     
-                    <el-form-item label="快递公司" prop="shipper_id">
+                    <el-form-item v-if="infoForm.order_status==2||infoForm.order_status==3" label="快递公司" prop="shipper_id">
                       <el-select v-model="infoForm.expressInfo.shipper_id" placeholder="请选择快递公司">
                         <el-option v-for="item in infoForm.shipperInfos" :key="item.id" :label="item.name" :value="item.id"></el-option>
                       </el-select>
                     </el-form-item>
 
-                    <el-form-item label="快递单号" prop="logistic_code">
+                    <el-form-item v-if="infoForm.order_status==2||infoForm.order_status==3" label="快递单号" prop="logistic_code">
                       <el-input v-model="infoForm.expressInfo.logistic_code" placeholder='请填写快递单号'></el-input>
                     </el-form-item>
 

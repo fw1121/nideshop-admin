@@ -36,7 +36,7 @@
 					</el-table-column>
 					<el-table-column prop="is_show" label="跳转至" width="150">
 						<template scope="scope">
-							{{ scope.row.media_type == 0 ? '商品:' + scope.row.media_id  : '专题:' + scope.row.media_id }}
+							{{ scope.row.media_type == 0 ? '商品:' + scope.row.media_id : scope.row.media_type == 1 ?  '专题:' + scope.row.media_id : '无' }}
 						</template>
 					</el-table-column>
 					<el-table-column prop="is_show" label="是否显示" width="100">

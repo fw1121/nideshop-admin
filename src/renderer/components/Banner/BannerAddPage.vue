@@ -34,6 +34,7 @@
                       <el-radio-group v-model="infoForm.media_type">
                         <el-radio-button label="0" :key="0">商品</el-radio-button>
                         <el-radio-button label="1" :key="1">专题</el-radio-button>
+                        <el-radio-button label="9" :key="9">无</el-radio-button>
                       </el-radio-group>
                     </el-form-item>
 
