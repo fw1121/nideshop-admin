@@ -3,7 +3,7 @@
         <div class="navbar">
             <div class="menu">
                 <div class="menu-item">
-                    <i class="fa fa-user"></i>
+                    <i class="fa fa-user" @click="goUserInfo"></i>
                 </div>
                 <div class="menu-item">
                     <i class="fa fa-sign-out" @click="logout"></i>
@@ -20,6 +20,11 @@
             return {}
         },
         methods: {
+            goUserInfo()
+            {
+                this.$router.push({ name: 'userInfo_add', query: {} })
+            },
+
             logout() {
                 this.$confirm('是否要退出?', '提示', {
                     confirmButtonText: '确定',

@@ -27,7 +27,9 @@
           <el-form-item label="推荐类型">
             <el-radio-group v-model="infoForm.stock_type">
               <el-radio-button label="0" :key="0">海外直购(amazon)</el-radio-button>
-              <el-radio-button label="1" :key="1">海外产地直达</el-radio-button>
+              <el-radio-button label="1" :key="1">海外产地直达(丹麦)</el-radio-button>
+              <el-radio-button label="2" :key="2">花、多肉</el-radio-button>
+              <el-radio-button label="3" :key="3">日本代购</el-radio-button>
               <el-radio-button label="9" :key="9">其他</el-radio-button>
           </el-radio-group>
           </el-form-item>
@@ -42,12 +44,13 @@
             </el-select>
           </el-form-item> -->
 
-          <el-form-item label="所属品牌" prop="brand_id" :rules="[
+          <!-- <el-form-item label="所属品牌" prop="brand_id" :rules="[
           { type:'number', required: true,  message: '请选择所属品牌'}]">
             <el-select v-model="infoForm.brand_id" placeholder="请选择品牌">
               <el-option v-for="item in brandOptions" :key="item.id" :label="item.name" :value="item.id"></el-option>
             </el-select>
-          </el-form-item>
+          </el-form-item> -->
+
           <!-- <el-form-item label="商品简介" prop="goods_desc">
             <el-input type="textarea" v-model="infoForm.goods_desc" :rows="3"></el-input>
             <div class="form-tip"></div>
@@ -63,6 +66,13 @@
             </el-upload>
           </el-form-item>
 
+          <el-form-item label="京东外链" prop="link_jd">
+            <el-input v-model="infoForm.link_jd" placeholder="填写后会在商品详情页展现，非必填"></el-input>
+          </el-form-item>
+
+          <el-form-item label="亚马逊外链" prop="link_amazon">
+            <el-input v-model="infoForm.link_amazon" placeholder="填写后会在商品详情页展现，非必填"></el-input>
+          </el-form-item>
 
           <el-form-item label="商品属性" name="attribute" prop="attribute">
             <div v-for="(item, curIndex) in infoForm.attribute" :key="item.hashCode">
@@ -191,12 +201,15 @@ export default {
         new_sort_order: 10,
 
         goods_number: 0,
-        brand_id: null,
+        //brand_id: null,
         category_id: 0,
         is_on_sale: true,
         is_hot: false,
         stock_type: 0,
         retail_price: 0,
+
+        link_jd: '', // 京东外链
+        link_amazon: '', // 亚马逊外链
 
         gallery: [], // 商品banner对象集合
         deletedGalleries: [], // 删除的banner对象集合

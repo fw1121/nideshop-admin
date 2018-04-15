@@ -4,7 +4,7 @@ import Router from 'vue-router'
 Vue.use(Router)
 
 export default new Router({
-    scrollBehavior: () => ({y: 0}),
+    scrollBehavior: () => ({ y: 0 }),
     routes: [
         {
             path: '/',
@@ -20,6 +20,11 @@ export default new Router({
                     path: '/',
                     name: 'welcome',
                     component: require('@/components/WelcomePage')
+                },
+                {
+                    path: 'userInfo/add',
+                    name: 'userInfo_add',
+                    component: require('@/components/UserInfoAddPage')
                 },
                 {
                     path: 'goods',
@@ -75,22 +80,42 @@ export default new Router({
                     path: 'operate/banner/add',
                     name: 'banner_add',
                     component: require('@/components/Banner/BannerAddPage')
-                  },
-              {
-                path: 'operate/topic/add',
-                name: 'topic_add',
-                component: require('@/components/Topic/TopicAddPage')
-              },
-              {
-                path: 'user',
-                name: 'user',
-                component: require('@/components/User/UserPage')
-              },
-              {
-                path: 'user/add',
-                name: 'user_add',
-                component: require('@/components/User/UserAddPage')
-              },
+                },
+                {
+                    path: 'operate/topic/add',
+                    name: 'topic_add',
+                    component: require('@/components/Topic/TopicAddPage')
+                },
+                {
+                    path: 'user',
+                    name: 'user',
+                    component: require('@/components/User/UserPage')
+                },
+                {
+                    path: 'user/add',
+                    name: 'user_add',
+                    component: require('@/components/User/UserAddPage')
+                },
+                {
+                    path: 'issue',
+                    name: 'issue',
+                    component: require('@/components/Issue/IssuePage')
+                },
+                {
+                    path: 'issue/add',
+                    name: 'issue_add',
+                    component: require('@/components/Issue/IssueAddPage')
+                },
+                {
+                    path: 'systemConfig',
+                    name: 'systemConfig',
+                    component: require('@/components/SystemConfig/SystemConfigPage')
+                },
+                {
+                    path: 'systemConfig/add',
+                    name: 'systemConfig_add',
+                    component: require('@/components/SystemConfig/SystemConfigAddPage')
+                },
             ]
         },
         {

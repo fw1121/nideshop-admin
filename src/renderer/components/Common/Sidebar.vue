@@ -22,11 +22,27 @@
                     <i class="fa fa-circle"></i>
                     <span>商品分类</span>
                 </el-menu-item>
-                <el-menu-item index="/dashboard/brand">
+                <!-- <el-menu-item index="/dashboard/brand">
                     <i class="fa fa-circle"></i>
                     <span>品牌管理</span>
+                </el-menu-item> -->
+            </el-submenu>
+            
+            <el-submenu index="operate">
+                <template slot="title">
+                    <i class="fa fa-large fa-truck"></i>
+                    <span>店铺运营</span>
+                </template>
+                <el-menu-item index="/dashboard/operate/topic">
+                    <i class="fa fa-circle"></i>
+                    <span>专题管理</span>
+                </el-menu-item>
+                <el-menu-item index="/dashboard/operate/banner">
+                    <i class="fa fa-circle"></i>
+                    <span>首页banner管理</span>
                 </el-menu-item>
             </el-submenu>
+
             <el-submenu index="order">
                 <template slot="title">
                     <i class="fa fa-large fa-truck"></i>订单中心
@@ -48,20 +64,7 @@
                     <!--<span>订单评价</span>-->
                 <!--</el-menu-item>-->
             </el-submenu>
-            <el-submenu index="operate">
-                <template slot="title">
-                    <i class="fa fa-large fa-truck"></i>
-                    <span>店铺运营</span>
-                </template>
-                <el-menu-item index="/dashboard/operate/topic">
-                    <i class="fa fa-circle"></i>
-                    <span>专题管理</span>
-                </el-menu-item>
-                <el-menu-item index="/dashboard/operate/banner">
-                    <i class="fa fa-circle"></i>
-                    <span>首页banner管理</span>
-                </el-menu-item>
-            </el-submenu>
+
             <!--<el-submenu index="total">-->
                 <!--<template slot="title">-->
                     <!--<i class="fa fa-large fa-line-chart"></i>-->
@@ -80,6 +83,21 @@
                 <el-menu-item index="/dashboard/user">
                     <i class="fa fa-circle"></i>
                     <span>会员列表</span>
+                </el-menu-item>
+            </el-submenu>
+
+            <el-submenu index="config">
+                <template slot="title">
+                    <i class="fa fa-large fa-users"></i>
+                    <span>配置管理</span>
+                </template>
+                <el-menu-item index="/dashboard/systemConfig">
+                    <i class="fa fa-circle"></i>
+                    <span>系统配置</span>
+                </el-menu-item>
+                <el-menu-item index="/dashboard/issue">
+                    <i class="fa fa-circle"></i>
+                    <span>常见问题配置</span>
                 </el-menu-item>
             </el-submenu>
             <!--<el-submenu index="setting">-->

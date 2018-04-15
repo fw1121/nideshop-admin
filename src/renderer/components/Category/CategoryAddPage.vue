@@ -14,7 +14,7 @@
             <div class="form-table-box">
                 <el-form ref="infoForm" :rules="infoRules" :model="infoForm" label-width="120px">
                     <el-form-item label="上级分类" prop="name">
-                        <el-select v-model="infoForm.parent_id" placeholder="请选择上级分类">
+                        <el-select v-model="infoForm.parent_id" placeholder="请选择上级分类" @change="handleChange">
                             <el-option v-for="item in parentCategory" :key="item.id" :label="item.name" :value="item.id"></el-option>
                         </el-select>
                     </el-form-item>
@@ -37,6 +37,20 @@
                     <el-form-item label="排序">
                         <el-input-number v-model="infoForm.sort_order" :min="1" :max="1000"></el-input-number>
                     </el-form-item>
+
+                    <el-form-item v-if="isShowSeller" label="商家联系电话">
+                        <el-input v-model="infoForm.seller_contact"></el-input>
+                    </el-form-item>
+                    <el-form-item v-if="isShowSeller" label="微信收款码" prop="pay_qrcode">
+                        <el-upload class="image-uploader" name="pic"
+                                   :action="actionGoodsPic" :show-file-list="false"
+                                   :on-success="handleUploadImageSuccess" :headers="uploaderHeader" :data="{type:'pay_qrcode'}">
+                            <img v-if="infoForm.pay_qrcode" :src="infoForm.pay_qrcode" class="image-show">
+                            <i v-else class="el-icon-plus image-uploader-icon"></i>
+                        </el-upload>
+                        <div class="form-tip">图片尺寸：无限制</div>
+                    </el-form-item>
+
                     <el-form-item label="启用">
                         <el-switch v-model="infoForm.is_show"></el-switch>
                     </el-form-item>
@@ -52,6 +66,8 @@
 
 <script>
   import api from '@/config/api';
+import { parse } from 'path';
+import { log } from 'util';
   export default {
     data() {
       return {
@@ -66,6 +82,7 @@
             name: '顶级分类'
           }
         ],
+        isShowSeller:true, // 是否显示商家信息
         infoForm: {
           id: 0,
           name: "",
@@ -74,6 +91,8 @@
           wap_banner_url: '',
           sort_order: 100,
           is_show: true,
+          seller_contact : '',
+          pay_qrcode : '',
         },
         infoRules: {
           name: [
@@ -114,6 +133,16 @@
           }
         });
       },
+
+      handleChange(item) {
+        if(item==0)
+        {
+          this.isShowSeller = true;
+        }else{
+          this.isShowSeller = false;
+        }
+      },
+
       handleUploadImageSuccess(res, file) {
           if (res.errno === 0) {
           switch (res.data.params.type) {
@@ -121,6 +150,9 @@
             //分类图片
             case "wap_banner_url":
               this.infoForm.wap_banner_url = res.data.fileUrl;
+              break;
+            case "pay_qrcode":
+              this.infoForm.pay_qrcode = res.data.fileUrl
               break;
           }
         }

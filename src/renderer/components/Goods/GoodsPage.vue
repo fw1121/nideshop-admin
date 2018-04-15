@@ -23,6 +23,12 @@
                         </el-cascader>
                     </el-form-item>
 
+                     <el-form-item label="商品类型" prop="">
+                      <el-select v-model="filterForm.goodsTypeSelected" placeholder="请选择商品类型">
+                        <el-option v-for="item in goodsTypeOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
+                      </el-select>
+                    </el-form-item>
+
                     <el-form-item label="排序类型">
                     <el-radio-group v-model="filterForm.sortChecked">
                       <el-radio-button label="0" :key="0">排序号</el-radio-button>
@@ -48,7 +54,7 @@
                     </el-table-column>
                     <el-table-column prop="stock_type" label="商品类型" width="120">
                         <template scope="scope">
-                            {{ scope.row.stock_type == 1 ? '海外产地直达' : scope.row.stock_type == 2 ? '海外直购' : '其他' }}
+                            {{ scope.row.stock_type == 0 ? '海外直购(amazon)' : scope.row.stock_type == 1 ? '海外产地直达(丹麦)' :  scope.row.stock_type == 2 ? '花、多肉' : scope.row.stock_type == 3 ? '日本代购' : '其他' }}
                         </template>
                     </el-table-column>
                     <el-table-column prop="retail_price" label="售价¥" width="120">
@@ -75,7 +81,7 @@
                     <el-table-column label="操作" width="140">
                         <template scope="scope">
                             <el-button size="small" @click="handleRowEdit(scope.$index, scope.row)">编辑</el-button>
-                            <el-button size="small" type="danger" @click="handleRowDelete(scope.$index, scope.row)">删除</el-button>
+                            <el-button v-if="isShowDelete" size="small" type="danger" @click="handleRowDelete(scope.$index, scope.row)">删除</el-button>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -89,26 +95,38 @@
 </template>
 
 <script>
+
+import api from "@/config/api";
 export default {
   data() {
     return {
       page: 1,
       total: 0,
+      isShowDelete : false,
       filterForm: {
         name: "",
         category_id: '',
         sortChecked : 0,
+        goodsTypeSelected : "",
       },
       tableData: [],
       
 
-      categoryOptions: [{value:"", label:"请选择分类"}], // 分类数据
+      categoryOptions: [{value:"", label:"全部分类"}], // 分类数据
       categoryCascaderConfig: {
         value: "id",
         label: "name",
         children: "children"
       }, // 分类数据配置
       categorySelected: [], // 当前选中的分类
+
+      goodsTypeOptions : [{value:"", label:"全部商品类型"},
+                          {value:"0", label:"海外直购"},
+                          {value:"1", label:"海外产地直达(丹麦)"},
+                          {value:"2", label:"花、多肉"},
+                          {value:"3", label:"日本代购"},
+                          {value:"9", label:"其他"},
+                          ]
     };
   },
   methods: {
@@ -183,6 +201,7 @@ export default {
             name: this.filterForm.name,
             category_id : this.filterForm.category_id,
             sortChecked : this.filterForm.sortChecked,
+            goodsTypeSelected: this.filterForm.goodsTypeSelected,
           }
         })
         .then(response => {
@@ -202,6 +221,8 @@ export default {
     //   console.log("xxx mounted:" + goodsPage);
     //   this.page = parseInt(goodsPage);
     // }
+
+    this.isShowDelete = api.isShowDelete;
 
     let savedFilterForm = localStorage.getItem("goodsFilterForm");
 

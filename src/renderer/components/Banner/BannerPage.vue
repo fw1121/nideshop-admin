@@ -49,7 +49,7 @@
 					<el-table-column label="操作" width="140">
 						<template scope="scope">
 							<el-button size="small" @click="handleRowEdit(scope.$index, scope.row)">编辑</el-button>
-							<el-button size="small" type="danger" @click="handleRowDelete(scope.$index, scope.row)">删除</el-button>
+							<el-button size="small" v-if="isShowDelete" type="danger" @click="handleRowDelete(scope.$index, scope.row)">删除</el-button>
 						</template>
 					</el-table-column>
 				</el-table>
@@ -63,10 +63,11 @@
 </template>
 
 <script>
-
+import api from "@/config/api";
 export default {
 	data() {
 		return {
+			isShowDelete : false,
 			page: 1,
 			total: 0,
 			filterForm: {
@@ -130,6 +131,7 @@ export default {
 
 	},
 	mounted() {
+		 this.isShowDelete = api.isShowDelete;
 		this.getList();
 	}
 }
