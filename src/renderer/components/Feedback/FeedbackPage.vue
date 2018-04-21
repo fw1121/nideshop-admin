@@ -4,13 +4,8 @@
 			<el-breadcrumb class="breadcrumb" separator="/">
 				<el-breadcrumb-item :to="{ path: '/dashboard' }">首页</el-breadcrumb-item>
 				<el-breadcrumb-item>用户管理</el-breadcrumb-item>
-				<el-breadcrumb-item>会员列表</el-breadcrumb-item>
+				<el-breadcrumb-item>反馈列表</el-breadcrumb-item>
 			</el-breadcrumb>
-			<div class="operation-nav">
-				<router-link to="/dashboard/user/add">
-					<!--<el-button type="primary" icon="plus">添加会员</el-button>-->
-				</router-link>
-			</div>
 		</div>
 		<div class="content-main">
 			<div class="filter-box">
@@ -28,7 +23,7 @@
 			</div>
 			<div class="form-table-box">
 				<el-table :data="tableData" style="width: 100%" border stripe>
-					<el-table-column prop="id" label="ID" width="100">
+					<el-table-column prop="id" label="ID" width="50">
 					</el-table-column>
 					<el-table-column prop="username" label="会员名称">
 					</el-table-column>
@@ -44,22 +39,18 @@
 							<img v-if="scope.row.avatar" :src="scope.row.avatar" class="image-show">
 						</template>
 					</el-table-column>
-					<el-table-column prop="mobile" label="手机号">
+					<el-table-column prop="user_email" label="联系方式">
 					</el-table-column>
-					<el-table-column prop="register_time" label="注册时间">
+					<el-table-column prop="msg_type" label="反馈类型">
 						<template scope="scope">
-							{{ scope.row.register_time | formatDate }}
+							{{ scope.row.msg_type == 1 ? '商品相关' : scope.row.msg_type == 2 ? '物流状况' : scope.row.msg_type == 3 ? '客户服务' : scope.row.msg_type == 4 ? '优惠活动' : scope.row.msg_type == 5 ? '功能异常' : scope.row.msg_type == 6 ? '产品建议' : scope.row.msg_type == 7 ? '其他' : '未知'}}
 						</template>
 					</el-table-column>
-					<el-table-column prop="register_time" label="最近登录时间">
-						<template scope="scope">
-							{{ scope.row.last_login_time | formatDate }}
-						</template>
+					<el-table-column prop="msg_content" label="反馈内容" width="400">
 					</el-table-column>
-					<el-table-column label="操作" width="140">
+					<el-table-column prop="msg_time" label="反馈时间">
 						<template scope="scope">
-							<!--<el-button size="small" @click="handleRowEdit(scope.$index, scope.row)">编辑</el-button>-->
-							<el-button size="small" v-if="isShowDelete" type="danger" @click="handleRowDelete(scope.$index, scope.row)">删除</el-button>
+							{{ scope.row.msg_time | formatDate }}
 						</template>
 					</el-table-column>
 				</el-table>
@@ -98,38 +89,12 @@ export default {
 			localStorage.setItem('userFilterForm', JSON.stringify(this.filterForm));
 			this.getList()
 		},
-		handleRowEdit(index, row) {
-			this.$router.push({ name: 'user_add', query: { id: row.id } })
-		},
-		handleRowDelete(index, row) {
-
-			this.$confirm('确定要删除?', '提示', {
-				confirmButtonText: '确定',
-				cancelButtonText: '取消',
-				type: 'warning'
-			}).then(() => {
-
-				this.axios.post('user/destory', { id: row.id }).then((response) => {
-					console.log(response.data)
-					if (response.data.errno === 0) {
-						this.$message({
-							type: 'success',
-							message: '删除成功!'
-						});
-
-						this.getList();
-					}
-				})
-
-
-			});
-		},
 		onSubmitFilter() {
 			this.page = 1
 			this.getList()
 		},
 		getList() {
-			this.axios.get('user', {
+			this.axios.get('feedback', {
 				params: {
 					page: this.page,
 					name: this.filterForm.name,

@@ -92,6 +92,11 @@ export default new Router({
                     component: require('@/components/User/UserPage')
                 },
                 {
+                    path: 'feedback',
+                    name: 'feedback',
+                    component: require('@/components/Feedback/FeedbackPage')
+                },
+                {
                     path: 'user/add',
                     name: 'user_add',
                     component: require('@/components/User/UserAddPage')

@@ -23,6 +23,9 @@
           <el-form-item label="商品名称" prop="name">
             <el-input v-model="infoForm.name"></el-input>
           </el-form-item>
+          <el-form-item label="商品简单描述" name="goods_brief">
+            <el-input v-model="infoForm.goods_brief" placeholder="填写后会在商品详情页的商品名称下展现，非必填"></el-input>
+          </el-form-item>
 
           <el-form-item label="推荐类型">
             <el-radio-group v-model="infoForm.stock_type">
@@ -66,11 +69,11 @@
             </el-upload>
           </el-form-item>
 
-          <el-form-item label="京东外链" prop="link_jd">
+          <el-form-item label="京东外链" prop="link_jd" style="display:none;">
             <el-input v-model="infoForm.link_jd" placeholder="填写后会在商品详情页展现，非必填"></el-input>
           </el-form-item>
 
-          <el-form-item label="亚马逊外链" prop="link_amazon">
+          <el-form-item label="亚马逊外链" prop="link_amazon"  style="display:none;">
             <el-input v-model="infoForm.link_amazon" placeholder="填写后会在商品详情页展现，非必填"></el-input>
           </el-form-item>
 
@@ -188,6 +191,7 @@ export default {
         id: 0,
 
         name: "",
+        goods_brief : "",
         list_pic_url: "",
         goods_desc: [],
         deletedDescPics: [], // 删除的详情图片

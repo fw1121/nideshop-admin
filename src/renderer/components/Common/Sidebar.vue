@@ -78,11 +78,15 @@
             <el-submenu index="user">
                 <template slot="title">
                     <i class="fa fa-large fa-users"></i>
-                    <span>会员管理</span>
+                    <span>用户管理</span>
                 </template>
                 <el-menu-item index="/dashboard/user">
                     <i class="fa fa-circle"></i>
                     <span>会员列表</span>
+                </el-menu-item>
+                <el-menu-item index="/dashboard/feedback">
+                    <i class="fa fa-circle"></i>
+                    <span>用户反馈</span>
                 </el-menu-item>
             </el-submenu>
 
