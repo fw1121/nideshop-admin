@@ -125,6 +125,7 @@
 
                 </el-upload>                
                 <el-button class='image-delete' size="small" type="danger" @click="handleDeleteImg('banner', curIndex)">删除</el-button>    
+                
               </div>
 
             <el-upload v-if="infoForm.gallery.length<8" class="image-uploader" name="pic"
@@ -143,6 +144,8 @@
                     <i v-else class="el-icon-plus image-uploader-icon"></i>
                 </el-upload>                
                 <el-button class='image-delete' size="small" type="danger" @click="handleDeleteImg('desc', curIndex)">删除</el-button>    
+                <el-button v-if="curIndex!=0" class='image-delete' size="small" type="primary" @click="handleImgSort('desc', curIndex, true)">上移</el-button>    
+                <el-button v-if="curIndex!=infoForm.goods_desc.length-1" class='image-delete' size="small" type="primary" @click="handleImgSort('desc', curIndex, false)">下移</el-button>
               </div>
 
             <el-upload class="image-uploader" name="pic"
@@ -420,7 +423,7 @@ export default {
 
     /**
      *  处理删除图片
-     * @param type 类型 desc、poster、gallery
+     * @param type 类型 desc、banner
      */
     handleDeleteImg(type, index) {
       switch (type) {
@@ -439,6 +442,67 @@ export default {
               let deletedObj = this.infoForm.gallery.splice(index, 1);
               this.infoForm.deletedGalleries.push(deletedObj[0]);
             }
+          }
+          break;
+      }
+    },
+
+    /**
+     * 处理图片排序
+     * @param type 类型 desc、banner
+     * @param index 下标
+     * @param upOrDown 上移或者下移
+     */
+    handleImgSort(type, index, upOrDown)
+    {
+      switch (type) {
+        case "desc":
+          {
+
+            let arr = this.infoForm.goods_desc;
+            if (index >= 0 && index < arr.length) {
+              if(upOrDown)
+              {
+                if(index==0)
+                {
+                  return;
+                }
+                [arr[index-1], arr[index]]=[arr[index], arr[index-1]];
+              }
+              else{
+                if(index==arr.length-1)
+                {
+                  return;
+                }
+                [arr[index+1], arr[index]]=[arr[index], arr[index+1]];
+              }
+            }
+            this.infoForm.goods_desc = [];
+            this.infoForm.goods_desc = arr;
+          }
+          break;
+        case "banner":
+          {
+            let arr = this.infoForm.gallery;
+            if (index >= 0 && index < arr.length) {
+              if(upOrDown)
+              {
+                if(index==0)
+                {
+                  return;
+                }
+                [arr[index-1], arr[index]]=[arr[index], arr[index-1]];
+              }
+              else{
+                if(index==arr.length-1)
+                {
+                  return;
+                }
+                [arr[index+1], arr[index]]=[arr[index], arr[index+1]];
+              }
+            }
+            this.infoForm.gallery = [];
+            this.infoForm.gallery = arr;
           }
           break;
       }

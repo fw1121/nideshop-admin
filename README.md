@@ -31,6 +31,9 @@ npm run build:web
 
 ```
 
+#调试项目
+npm run dev
+
 # 测试账号
 admin
 admin888
