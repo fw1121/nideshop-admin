@@ -144,8 +144,8 @@
                     <i v-else class="el-icon-plus image-uploader-icon"></i>
                 </el-upload>                
                 <el-button class='image-delete' size="small" type="danger" @click="handleDeleteImg('desc', curIndex)">删除</el-button>    
-                <el-button v-if="curIndex!=0" class='image-delete' size="small" type="primary" @click="handleImgSort('desc', curIndex, true)">上移</el-button>    
-                <el-button v-if="curIndex!=infoForm.goods_desc.length-1" class='image-delete' size="small" type="primary" @click="handleImgSort('desc', curIndex, false)">下移</el-button>
+                <el-button v-if="curIndex!=0" class='image-delete' size="small" type="primary" @click="handleImgSort('desc', curIndex, true)">↑上移</el-button>    
+                <el-button v-if="curIndex!=infoForm.goods_desc.length-1" class='image-delete' size="small" type="primary" @click="handleImgSort('desc', curIndex, false)">↓下移</el-button>
               </div>
 
             <el-upload class="image-uploader" name="pic"
